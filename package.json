@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"@cool-vue/crud": "^1.0.4",
-		"@element-plus/icons-vue": "^0.2.6",
+		"@element-plus/icons-vue": "^0.2.7",
 		"array.prototype.flat": "^1.2.4",
 		"axios": "^0.21.1",
 		"clipboard": "^2.0.8",

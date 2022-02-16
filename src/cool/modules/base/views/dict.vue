@@ -2,45 +2,52 @@
 	<el-container>
 		<el-aside width="300px">
 			<el-container>
-				<el-main class="nopadding">
-					<el-tree
-						:ref="setRefs('dic')"
-						class="menu"
-						node-key="id"
-						:data="dicList"
-						:props="dicProps"
-						:highlight-current="true"
-						:expand-on-click-node="false"
-						@node-click="dicClick"
-					>
-						<template #default="{ node, data }">
-							<span class="custom-tree-node">
-								<span class="label">{{ node.label }}</span>
-								<span class="code">{{ data.code }}</span>
-								<span class="do">
-									<el-icon @click.stop="dicEdit(data)"><el-icon-edit /></el-icon>
-									<el-icon @click.stop="dicDel(node, data)"><el-icon-delete /></el-icon>
+				<cl-crud
+					:ref="setRefs('categoryCrud')"
+					@load="onCategoryLoad"
+					:on-refresh="onCategoryRefresh"
+				>
+					<el-main class="nopadding">
+						<el-tree
+							:ref="setRefs('tree')"
+							class="menu"
+							node-key="id"
+							:data="treeList"
+							:props="treeProps"
+							:highlight-current="true"
+							:expand-on-click-node="false"
+							@node-click="dicClick"
+						>
+							<template #default="{ node, data }">
+								<span class="custom-tree-node">
+									<span class="label">{{ node.label }}</span>
+									<span class="code">{{ data.key }}</span>
+									<span class="do">
+										<el-icon @click.stop="dicEdit(data)"><edit /></el-icon>
+										<el-icon @click.stop="dicDel(node, data)"
+											><delete
+										/></el-icon>
+									</span>
 								</span>
-							</span>
-						</template>
-					</el-tree>
-				</el-main>
-				<el-footer>
-					<el-button
-						type="primary"
-						size="mini"
-						icon="el-icon-plus"
-						style="width: 100%"
-						@click="addDic"
-						>字典分类</el-button
-					>
-				</el-footer>
+							</template>
+						</el-tree>
+					</el-main>
+					<el-footer>
+						<cl-add-btn
+							type="primary"
+							size="mini"
+							icon="el-icon-plus"
+							style="width: 100%"
+							>字典分类</cl-add-btn
+						>
+					</el-footer>
+					<cl-upsert :ref="setRefs('categoryUpsert')" :items="categoryUpsert.items" />
+				</cl-crud>
 			</el-container>
 		</el-aside>
 		<el-container class="is-vertical">
 			<cl-crud :ref="setRefs('crud')" :on-refresh="onRefresh" @load="onLoad">
 				<el-row type="flex">
-					<el-button size="small" v-if="catId > 0">当前分类: {{ catName }}({{ catKey }})</el-button>
 					<cl-refresh-btn size="small" />
 					<cl-add-btn size="small" />
 					<cl-flex1 />
@@ -60,11 +67,7 @@
 					<cl-pagination />
 				</el-row>
 
-				<cl-upsert
-					:ref="setRefs('upsert')"
-					:items="upsert.items"
-					:on-open="onOpenUpsert"
-				/>
+				<cl-upsert :ref="setRefs('upsert')" :items="upsert.items" :on-open="onOpenUpsert" />
 			</cl-crud>
 		</el-container>
 	</el-container>
@@ -75,14 +78,17 @@ import { defineComponent, inject, reactive, ref } from "vue";
 import { useRefs } from "/@/cool";
 import { QueryList, Table, Upsert } from "@cool-vue/crud/types";
 import { ElMessage } from "element-plus";
+import { Edit, Delete } from "@element-plus/icons-vue";
 
 export default defineComponent({
 	name: "sys-dict",
-
+	components: {
+		Edit,
+		Delete
+	},
 	setup() {
 		const service = inject<any>("service");
 		const { refs, setRefs } = useRefs();
-		const selects = reactive<any>({ dept: {}, ids: [] });
 		const table = reactive<Table>({
 			props: {
 				"default-sort": {
@@ -131,39 +137,7 @@ export default defineComponent({
 				}
 			]
 		});
-
-		function dicDel(node, data) {
-			// refs.value.crud.refresh(params);
-			// this.$confirm(`确定删除 ${data.name} 项吗？`, '提示', {
-			// 	type: 'warning'
-			// }).then(() => {
-			// 	this.showDicloading = true;
-			//
-			// 	//删除节点是否为高亮当前 是的话 设置第一个节点高亮
-			// 	var dicCurrentKey = this.$refs.dic.getCurrentKey();
-			// 	this.$refs.dic.remove(data.id)
-			// 	if(dicCurrentKey == data.id){
-			// 		var firstNode = this.dicList[0];
-			// 		if(firstNode){
-			// 			this.$refs.dic.setCurrentKey(firstNode.id);
-			// 			this.$refs.table.upData({
-			// 				code: firstNode.code
-			// 			})
-			// 		}else{
-			// 			this.listApi = null;
-			// 			this.$refs.table.tableData = []
-			// 		}
-			// 	}
-			//
-			// 	this.showDicloading = false;
-			// 	this.$message.success("操作成功")
-			// }).catch(() => {
-			//
-			// })
-		}
-
-		const dicList = ref()
-
+		const treeList = ref([]);
 		const categoryUpsert = reactive<Upsert>({
 			items: [
 				{
@@ -229,12 +203,13 @@ export default defineComponent({
 				}
 			]
 		});
-
 		const list = ref<QueryList[]>([]);
 
 		const catId = ref<any>(0);
 		const catName = ref<string>("");
 		const catKey = ref<string>("");
+
+		const treeProps = ref({ label: "name" });
 
 		const upsert = reactive<Upsert>({
 			items: [
@@ -350,10 +325,16 @@ export default defineComponent({
 			refs.value.crud.refresh(params);
 		}
 
+		// 分类数据刷新回调逻辑
+		async function onCategoryRefresh(params: any, { next }: any) {
+			const { list } = await next(params);
+			treeList.value = list;
+			console.log(list);
+		}
+
 		// 刷新监听
 		async function onRefresh(params: any, { next, render }: any) {
 			const { list } = await next(params);
-
 			render(
 				list.map((e: any) => {
 					if (e.roleName) {
@@ -381,9 +362,10 @@ export default defineComponent({
 		}
 
 		return {
+			treeProps,
+			treeList,
 			service,
 			refs,
-			selects,
 			categoryUpsert,
 			table,
 			upsert,
@@ -393,10 +375,10 @@ export default defineComponent({
 			onCategoryLoad,
 			refresh,
 			onRefresh,
+			onCategoryRefresh,
 			catId,
 			catName,
 			catKey,
-			dicDel,
 			onSelectionChange,
 			onOpenUpsert
 		};

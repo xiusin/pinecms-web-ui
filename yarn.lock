@@ -291,10 +291,10 @@
     mitt "^3.0.0"
     vue "^3.2.23"
 
-"@element-plus/icons-vue@^0.2.6":
-  version "0.2.6"
-  resolved "https://registry.npmmirror.com/@element-plus/icons-vue/download/@element-plus/icons-vue-0.2.6.tgz#28e48aa4abd5b02638b41c1d95a6e7f96bb23308"
-  integrity sha512-2gg7VCq4d2firgl7/aVym4Cx/wqKFwKybEQGJiiWJN4urW36+QdAEG1knqSD9qidbjhVp0Jnc9XdSTR1/4Whzw==
+"@element-plus/icons-vue@^0.2.7":
+  version "0.2.7"
+  resolved "https://registry.npmmirror.com/@element-plus/icons-vue/-/icons-vue-0.2.7.tgz#c0b75363098bf1fba414e18706604bfe5057ae1b"
+  integrity sha512-S8kDbfVaWkQvbUYQE1ui448tzaHfUvyESCep9J6uPRlViyQPXjdIfwLBhV6AmQSOfFS8rL+xehJGhvzPXLrSBg==
 
 "@element-plus/icons@^0.0.11":
   version "0.0.11"
