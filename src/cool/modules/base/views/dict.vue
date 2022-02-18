@@ -1,49 +1,45 @@
 <template>
 	<el-container>
 		<el-aside width="300px">
-			<el-container>
-				<cl-crud
-					:ref="setRefs('categoryCrud')"
-					@load="onCategoryLoad"
-					:on-refresh="onCategoryRefresh"
-				>
-					<el-main class="nopadding">
-						<el-tree
-							:ref="setRefs('tree')"
-							class="menu"
-							node-key="id"
-							:data="treeList"
-							:props="treeProps"
-							:highlight-current="true"
-							:expand-on-click-node="false"
-							@node-click="dicClick"
-						>
-							<template #default="{ node, data }">
-								<span class="custom-tree-node">
+			<cl-crud
+				:ref="setRefs('categoryCrud')"
+				@load="onCategoryLoad"
+				:on-refresh="onCategoryRefresh"
+			>
+				<el-main class="nopadding">
+					<el-tree
+						:ref="setRefs('tree')"
+						class="menu"
+						node-key="id"
+						:data="treeList"
+						:props="treeProps"
+						:highlight-current="true"
+						:expand-on-click-node="false"
+						@node-click="dicClick"
+					>
+						<template #default="{ node, data }">
+							<span class="custom-tree-node">
+								<el-tooltip v-if="data.remark" :content="data.remark" raw-content>
 									<span class="label">{{ node.label }}</span>
-									<span class="code">{{ data.key }}</span>
-									<span class="do">
-										<el-icon @click.stop="dicEdit(data)"><edit /></el-icon>
-										<el-icon @click.stop="dicDel(node, data)"
-											><delete
-										/></el-icon>
-									</span>
+								</el-tooltip>
+								<span class="label" v-else>{{ node.label }}</span>
+
+								<span class="code">{{ data.key }}</span>
+								<span class="do">
+									<el-icon @click.stop="categoryEdit(data)"><edit /></el-icon>
+									<el-icon @click.stop="dicDel(node, data)"><delete /></el-icon>
 								</span>
-							</template>
-						</el-tree>
-					</el-main>
-					<el-footer>
-						<cl-add-btn
-							type="primary"
-							size="mini"
-							icon="el-icon-plus"
-							style="width: 100%"
-							>字典分类</cl-add-btn
-						>
-					</el-footer>
-					<cl-upsert :ref="setRefs('categoryUpsert')" :items="categoryUpsert.items" />
-				</cl-crud>
-			</el-container>
+							</span>
+						</template>
+					</el-tree>
+				</el-main>
+				<el-footer style="line-height: 70px">
+					<cl-add-btn type="primary" size="mini" icon="el-icon-plus" style="width: 100%"
+						>字典分类
+					</cl-add-btn>
+				</el-footer>
+				<cl-form :ref="setRefs('form')" />
+			</cl-crud>
 		</el-aside>
 		<el-container class="is-vertical">
 			<cl-crud :ref="setRefs('crud')" :on-refresh="onRefresh" @load="onLoad">
@@ -78,7 +74,7 @@ import { defineComponent, inject, reactive, ref } from "vue";
 import { useRefs } from "/@/cool";
 import { QueryList, Table, Upsert } from "@cool-vue/crud/types";
 import { ElMessage } from "element-plus";
-import { Edit, Delete } from "@element-plus/icons-vue";
+import { Delete, Edit } from "@element-plus/icons-vue";
 
 export default defineComponent({
 	name: "sys-dict",
@@ -138,71 +134,6 @@ export default defineComponent({
 			]
 		});
 		const treeList = ref([]);
-		const categoryUpsert = reactive<Upsert>({
-			items: [
-				{
-					prop: "name",
-					label: "字典名称",
-					span: 12,
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请填写字典名称"
-						}
-					},
-					rules: {
-						required: true,
-						message: "字典名称不能为空"
-					}
-				},
-				{
-					prop: "key",
-					label: "字典标识",
-					span: 12,
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请填写字典标识"
-						}
-					},
-					rules: {
-						required: true,
-						message: "字典标识不能为空"
-					}
-				},
-				{
-					prop: "remark",
-					label: "备注",
-					span: 24,
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请填写备注",
-							type: "textarea",
-							rows: 4
-						}
-					}
-				},
-				{
-					prop: "status",
-					label: "状态",
-					value: true,
-					component: {
-						name: "el-radio-group",
-						options: [
-							{
-								label: "正常",
-								value: true
-							},
-							{
-								label: "禁用",
-								value: false
-							}
-						]
-					}
-				}
-			]
-		});
 		const list = ref<QueryList[]>([]);
 
 		const catId = ref<any>(0);
@@ -361,12 +292,103 @@ export default defineComponent({
 			}
 		}
 
+		function categoryEdit() {
+			refs.value.form.open({
+				title: "添加分类",
+				width: "600px",
+				items: [
+					{
+						prop: "name",
+						label: "字典名称",
+						span: 12,
+						component: {
+							name: "el-input",
+							props: {
+								placeholder: "请填写字典名称"
+							}
+						},
+						rules: {
+							required: true,
+							message: "字典名称不能为空"
+						}
+					},
+					{
+						prop: "key",
+						label: "字典标识",
+						span: 12,
+						component: {
+							name: "el-input",
+							props: {
+								placeholder: "请填写字典标识"
+							}
+						},
+						rules: {
+							required: true,
+							message: "字典标识不能为空"
+						}
+					},
+					{
+						prop: "remark",
+						label: "备注",
+						span: 24,
+						component: {
+							name: "el-input",
+							props: {
+								placeholder: "请填写备注",
+								type: "textarea",
+								rows: 4
+							}
+						}
+					},
+					{
+						prop: "status",
+						label: "状态",
+						value: true,
+						component: {
+							name: "el-radio-group",
+							options: [
+								{
+									label: "正常",
+									value: true
+								},
+								{
+									label: "禁用",
+									value: false
+								}
+							]
+						}
+					}
+				],
+				on: {
+					submit: (data: any, { done, close }: any) => {
+						let next = null;
+
+						if (!item.id) {
+							next = service.space.type.add(data);
+						} else {
+							next = service.space.type.update({
+								...data,
+								id: item.id
+							});
+						}
+
+						next.then(() => {
+							close();
+						}).catch((err: string) => {
+							ElMessage.error(err);
+							done();
+						});
+					}
+				}
+			});
+		}
+
 		return {
+			categoryEdit,
 			treeProps,
 			treeList,
 			service,
 			refs,
-			categoryUpsert,
 			table,
 			upsert,
 			setRefs,
@@ -396,24 +418,30 @@ export default defineComponent({
 	padding-right: 24px;
 	height: 100%;
 }
+
 .custom-tree-node .code {
 	font-size: 12px;
 	color: #999;
 }
+
 .custom-tree-node .do {
 	display: none;
 }
+
 .custom-tree-node .do i {
 	margin-left: 5px;
 	color: #999;
 	padding: 5px;
 }
+
 .custom-tree-node .do i:hover {
 	color: #333;
 }
+
 .custom-tree-node:hover .code {
 	display: none;
 }
+
 .custom-tree-node:hover .do {
 	display: inline-block;
 }
