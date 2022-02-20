@@ -87,6 +87,7 @@ export default class BaseService {
 	}
 
 	delete(data: any) {
+		console.log("delete", data);
 		return this.request({
 			url: "/delete",
 			method: "POST",

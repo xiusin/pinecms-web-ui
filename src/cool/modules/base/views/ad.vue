@@ -1,138 +1,104 @@
 <template>
-	<div class="system-user">
-		<div class="pane">
-			<div class="dept">
-				<div class="container">
-					<cl-crud :ref="setRefs('categoryCrud')" @load="onCategoryLoad">
-						<el-row type="flex">
-							<cl-refresh-btn />
-							<cl-add-btn />
-						</el-row>
+	<el-container>
+		<el-aside width="300px">
+			<cl-crud
+				:ref="setRefs('categoryCrud')"
+				@load="onCategoryLoad"
+				:on-refresh="onCategoryRefresh"
+			>
+				<el-main class="nopadding">
+					<el-tree
+						:ref="setRefs('tree')"
+						class="menu"
+						node-key="id"
+						:data="treeList"
+						:props="treeProps"
+						:highlight-current="true"
+						:expand-on-click-node="false"
+						@node-click="categoryClick"
+					>
+						<template #default="{ node, data }">
+							<span class="custom-tree-node">
+								<el-tooltip v-if="data.remark" :content="data.remark" raw-content>
+									<span class="label">{{ node.label }}</span>
+								</el-tooltip>
+								<span class="label" v-else>{{ node.label }}</span>
 
-						<el-row>
-							<cl-table
-								:ref="setRefs('adSpaceTable')"
-								v-bind="adSpaceTable"
-								@selection-change="onSelectionChange"
+								<span class="code">{{ data.key }}</span>
+								<span class="do">
+									<el-icon @click.stop="categoryEdit(data)"><edit /></el-icon>
+									<el-icon @click.stop="categoryDelete(data)"><delete /></el-icon>
+								</span>
+							</span>
+						</template>
+					</el-tree>
+				</el-main>
+				<el-footer style="line-height: 40px">
+					<cl-add-btn type="primary" size="mini" icon="el-icon-plus" style="width: 100%"
+						>新增广告位
+					</cl-add-btn>
+				</el-footer>
+				<cl-upsert :ref="setRefs('categoryUpsert')" :items="categoryUpsert.items" />
+				<cl-form :ref="setRefs('form')" />
+			</cl-crud>
+		</el-aside>
+		<el-container class="is-vertical">
+			<cl-crud :ref="setRefs('crud')" :on-refresh="onRefresh" @load="onLoad">
+				<el-row type="flex">
+					<cl-refresh-btn size="small" />
+					<cl-add-btn size="small">新增{{ catName }}</cl-add-btn>
+					<cl-flex1 />
+					<cl-search-key size="small" />
+				</el-row>
+
+				<el-row>
+					<cl-table :ref="setRefs('table')" v-bind="table">
+						<template #column-image="{ scope }">
+							<el-image
+								v-if="scope.row.image"
+								lazy
+								:preview-src-list="[scope.row.image]"
+								:src="scope.row.image"
+								fit="contain"
+								style="max-height: 50px; max-width: 80px"
 							>
-								<template #column-name="{ scope }">
-									{{ scope.row.name
-									}}<el-popover
-										placement="top"
-										:width="200"
-										trigger="hover"
-										:content="scope.row.remark"
-									>
-										<template #reference>
-											<el-icon>
-												<picture>查看</picture>
-											</el-icon>
-										</template>
-									</el-popover>
+								<template #error>
+									<div class="image-slot" style="font-size: 45px">
+										<icon-svg name="icon-wechat-material" />
+									</div>
 								</template>
-								<template #slot-btn="{ scope }">
-									<el-button
-										@click="
-											changeCategory(
-												scope.row.id,
-												scope.row.key,
-												scope.row.name
-											)
-										"
-										type="text"
-										size="mini"
-										>广告
-									</el-button>
-								</template>
-							</cl-table>
-						</el-row>
-						<cl-upsert :ref="setRefs('categoryUpsert')" :items="categoryUpsert.items" />
-					</cl-crud>
-				</div>
-			</div>
-
-			<div class="user">
-				<div class="container">
-					<cl-crud :ref="setRefs('crud')" :on-refresh="onRefresh" @load="onLoad">
-						<el-row type="flex">
-							<el-button size="small" v-if="catId > 0"
-								>当前分类: {{ catName }}({{ catKey }})</el-button
-							>
-							<cl-refresh-btn />
-							<cl-add-btn />
-							<cl-flex1 />
-							<cl-search-key />
-						</el-row>
-
-						<el-row>
-							<cl-table
-								:ref="setRefs('table')"
-								v-bind="table"
-								@selection-change="onSelectionChange"
-							>
-								<template #column-image="{ scope }">
-									<el-image
-										v-if="scope.row.image"
-										lazy
-										:preview-src-list="[scope.row.image]"
-										:src="scope.row.image"
-										fit="contain"
-										style="max-height: 50px; max-width: 80px"
-									>
-										<template #error>
-											<div class="image-slot" style="font-size: 45px">
-												<icon-svg name="icon-wechat-material" />
-											</div>
-										</template>
-									</el-image>
-								</template>
-							</cl-table>
-						</el-row>
-
-						<el-row type="flex">
-							<cl-flex1 />
-							<cl-pagination />
-						</el-row>
-
-						<cl-upsert
-							:ref="setRefs('upsert')"
-							:items="upsert.items"
-							:on-open="onOpenUpsert"
-						/>
-					</cl-crud>
-				</div>
-			</div>
-		</div>
-	</div>
+							</el-image>
+						</template>
+					</cl-table>
+				</el-row>
+				<el-row type="flex"><cl-flex1 /><cl-pagination /></el-row>
+				<cl-upsert
+					:ref="setRefs('upsert')"
+					:items="upsert.items"
+					:on-open="onOpenUpsert"
+					:on-submit="onSubmit"
+				/>
+			</cl-crud>
+		</el-container>
+	</el-container>
 </template>
 
 <script lang="ts">
 import { defineComponent, inject, reactive, ref } from "vue";
 import { useRefs } from "/@/cool";
-import { QueryList, Table, Upsert } from "@cool-vue/crud/types";
-import { ElMessage, ElIcon } from "element-plus";
-import IconSvg from "../components/icon-svg/index.vue";
-import { Picture } from "@element-plus/icons-vue";
+import { Table, Upsert } from "@cool-vue/crud/types";
+import { ElMessage } from "element-plus";
+import { Delete, Edit } from "@element-plus/icons-vue";
 
 export default defineComponent({
 	name: "sys-ad",
-
 	components: {
-		IconSvg,
-		ElIcon,
-		Picture
+		Edit,
+		Delete
 	},
-
 	setup() {
 		const service = inject<any>("service");
-
 		const { refs, setRefs } = useRefs();
-
-		const selects = reactive<any>({
-			dept: {},
-			ids: []
-		});
-
 		const table = reactive<Table>({
 			props: {
 				"default-sort": {
@@ -144,7 +110,7 @@ export default defineComponent({
 				{
 					prop: "listorder",
 					label: "排序",
-					width: 170
+					width: 100
 				},
 				{
 					prop: "name",
@@ -154,26 +120,21 @@ export default defineComponent({
 				{
 					prop: "image",
 					label: "图片"
-					// component: {
-					// 	name: "el-image",
-					// 	props: {
-					// 		fit: "contain",
-					// 		height: 40
-					// 	}
-					// }
 				},
 				{
 					prop: "start_time",
-					label: "开始时间"
+					label: "开始时间",
+					width: 160
 				},
 				{
 					prop: "end_time",
-					label: "结束时间"
+					label: "结束时间",
+					width: 160
 				},
 				{
 					prop: "status",
 					label: "状态",
-					minWidth: 50,
+					width: 80,
 					dict: [
 						{
 							label: "正常",
@@ -194,34 +155,10 @@ export default defineComponent({
 				}
 			]
 		});
-
-		const adSpaceTable = reactive<Table>({
-			props: {
-				"default-sort": {
-					prop: "id",
-					order: "descending"
-				}
-			},
-			columns: [
-				{
-					prop: "name",
-					label: "广告位名称",
-					align: "left"
-				},
-				{
-					prop: "key",
-					label: "标识",
-					align: "left",
-					width: 80
-				},
-				{
-					type: "op",
-					buttons: ["slot-btn", "edit", "delete"],
-					width: 120
-				}
-			]
-		});
-
+		const treeList = ref([]);
+		const catId = ref<any>(0);
+		const catName = ref<any>("");
+		const treeProps = ref({ label: "name" });
 		const categoryUpsert = reactive<Upsert>({
 			items: [
 				{
@@ -269,12 +206,19 @@ export default defineComponent({
 				}
 			]
 		});
+		function categoryDelete(data: any) {
+			refs.value.categoryCrud.rowDelete(data);
+		}
 
-		const list = ref<QueryList[]>([]);
+		function categoryClick(data: any) {
+			catId.value = data.id;
+			catName.value = data.name;
+			refs.value.crud.refresh({ cid: catId });
+		}
 
-		const catId = ref<any>(0);
-		const catName = ref<string>("");
-		const catKey = ref<string>("");
+		function categoryEdit(data: any) {
+			refs.value.categoryCrud.rowEdit(data);
+		}
 
 		const upsert = reactive<Upsert>({
 			items: [
@@ -291,22 +235,6 @@ export default defineComponent({
 					rules: {
 						required: true,
 						message: "名称不能为空"
-					}
-				},
-				{
-					prop: "space_id",
-					label: "广告位",
-					component: {
-						name: "el-select",
-						props: {
-							placeholder: "请选择分类"
-						},
-						options: list
-					},
-					span: 12,
-					rules: {
-						required: true,
-						message: "分类必选"
 					}
 				},
 				{
@@ -364,24 +292,10 @@ export default defineComponent({
 			]
 		});
 
-		function changeCategory(categoryId: any, categoryKey: string, categoryName: string) {
-			catId.value = categoryId;
-			catKey.value = categoryKey;
-			catName.value = categoryName;
-			list.value = [{ label: categoryName, value: categoryId }];
-			refresh({ cid: categoryId });
-		}
-
 		// crud 加载
 		async function onLoad({ ctx, app }: any) {
 			ctx.service(service.system.ad).done();
-			const cats = await service.system.adSpace.list({ size: 1 });
-			if (cats.list.length) {
-				catId.value = cats.list[0].id;
-				catKey.value = cats.list[0].key;
-				catName.value = cats.list[0].name;
-				app.refresh({ cid: catId });
-			}
+			app.refresh({ cid: catId });
 		}
 
 		// crud 加载
@@ -390,15 +304,17 @@ export default defineComponent({
 			app.refresh();
 		}
 
-		// 刷新列表
-		function refresh(params: any) {
-			refs.value.crud.refresh(params);
+		// 分类数据刷新回调逻辑
+		async function onCategoryRefresh(params: any, { next }: any) {
+			const { list } = await next(params);
+			catId.value = list[0].id;
+			catName.value = list[0].name;
+			treeList.value = list;
 		}
 
 		// 刷新监听
 		async function onRefresh(params: any, { next, render }: any) {
 			const { list } = await next(params);
-
 			render(
 				list.map((e: any) => {
 					if (e.roleName) {
@@ -410,11 +326,10 @@ export default defineComponent({
 					return e;
 				})
 			);
-		}
-
-		// 多选监听
-		function onSelectionChange(selection: any[]) {
-			selects.ids = selection.map((e) => e.id);
+			if (params.cid === 0) {
+				refs.value.tree.setCurrentKey(catId.value);
+				refs.value.crud.refresh({ cid: catId });
+			}
 		}
 
 		function onOpenUpsert() {
@@ -424,110 +339,74 @@ export default defineComponent({
 			}
 		}
 
+		function onSubmit(isEdit, data, { done, close, next }) {
+			next({
+				...data,
+				cid: catId.value
+			});
+			close();
+		}
+
 		return {
+			onSubmit,
+			categoryClick,
+			categoryUpsert,
+			categoryEdit,
+			categoryDelete,
+			treeProps,
+			treeList,
 			service,
 			refs,
-			selects,
-			categoryUpsert,
 			table,
 			upsert,
 			setRefs,
-			changeCategory,
 			onLoad,
 			onCategoryLoad,
-			refresh,
 			onRefresh,
+			onCategoryRefresh,
 			catId,
 			catName,
-			catKey,
-			onSelectionChange,
-			adSpaceTable,
 			onOpenUpsert
 		};
 	}
 });
 </script>
 
-<style lang="scss" scoped>
-.system-user {
-	.pane {
-		display: flex;
-		height: 100%;
-		width: 100%;
-		position: relative;
-	}
+<style scoped>
+.custom-tree-node {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 14px;
+	padding-right: 24px;
+	height: 100%;
+}
 
-	.dept {
-		height: 100%;
-		width: 350px;
-		max-width: calc(100% - 50px);
-		background-color: #fff;
-		transition: width 0.3s;
-		margin-right: 10px;
-		flex-shrink: 0;
+.custom-tree-node .code {
+	font-size: 12px;
+	color: #999;
+}
 
-		& ._collapse {
-			margin-right: 0;
-			width: 0;
-		}
-	}
+.custom-tree-node .do {
+	display: none;
+}
 
-	.user {
-		width: calc(100% - 610px);
-		flex: 1;
+.custom-tree-node .do i {
+	margin-left: 5px;
+	color: #999;
+	padding: 5px;
+}
 
-		.header {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			height: 40px;
-			position: relative;
-			background-color: #fff;
+.custom-tree-node .do i:hover {
+	color: #333;
+}
 
-			span {
-				font-size: 14px;
-				white-space: nowrap;
-				overflow: hidden;
-			}
+.custom-tree-node:hover .code {
+	display: none;
+}
 
-			.icon {
-				position: absolute;
-				left: 0;
-				top: 0;
-				font-size: 18px;
-				cursor: pointer;
-				background-color: #fff;
-				height: 40px;
-				width: 80px;
-				line-height: 40px;
-				padding-left: 10px;
-			}
-		}
-	}
-
-	.dept,
-	.user {
-		overflow: hidden;
-
-		.container {
-			height: calc(100% - 40px);
-		}
-	}
-
-	@media only screen and (max-width: 768px) {
-		.dept {
-			width: calc(100% - 100px);
-		}
-	}
-
-	.image-slot {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 100%;
-		height: 100%;
-		background: #f5f7fa;
-		color: #909399;
-	}
+.custom-tree-node:hover .do {
+	display: inline-block;
 }
 </style>

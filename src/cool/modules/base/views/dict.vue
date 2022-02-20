@@ -15,7 +15,7 @@
 						:props="treeProps"
 						:highlight-current="true"
 						:expand-on-click-node="false"
-						@node-click="dicClick"
+						@node-click="categoryClick"
 					>
 						<template #default="{ node, data }">
 							<span class="custom-tree-node">
@@ -27,17 +27,18 @@
 								<span class="code">{{ data.key }}</span>
 								<span class="do">
 									<el-icon @click.stop="categoryEdit(data)"><edit /></el-icon>
-									<el-icon @click.stop="dicDel(node, data)"><delete /></el-icon>
+									<el-icon @click.stop="categoryDelete(data)"><delete /></el-icon>
 								</span>
 							</span>
 						</template>
 					</el-tree>
 				</el-main>
-				<el-footer style="line-height: 70px">
+				<el-footer style="line-height: 40px">
 					<cl-add-btn type="primary" size="mini" icon="el-icon-plus" style="width: 100%"
 						>字典分类
 					</cl-add-btn>
 				</el-footer>
+				<cl-upsert :ref="setRefs('categoryUpsert')" :items="categoryUpsert.items" />
 				<cl-form :ref="setRefs('form')" />
 			</cl-crud>
 		</el-aside>
@@ -45,25 +46,19 @@
 			<cl-crud :ref="setRefs('crud')" :on-refresh="onRefresh" @load="onLoad">
 				<el-row type="flex">
 					<cl-refresh-btn size="small" />
-					<cl-add-btn size="small" />
+					<cl-add-btn size="small">新增{{ catName }}</cl-add-btn>
 					<cl-flex1 />
 					<cl-search-key size="small" />
 				</el-row>
 
-				<el-row>
-					<cl-table
-						:ref="setRefs('table')"
-						v-bind="table"
-						@selection-change="onSelectionChange"
-					/>
-				</el-row>
-
-				<el-row type="flex">
-					<cl-flex1 />
-					<cl-pagination />
-				</el-row>
-
-				<cl-upsert :ref="setRefs('upsert')" :items="upsert.items" :on-open="onOpenUpsert" />
+				<el-row><cl-table :ref="setRefs('table')" v-bind="table" /></el-row>
+				<el-row type="flex"><cl-flex1 /><cl-pagination /></el-row>
+				<cl-upsert
+					:ref="setRefs('upsert')"
+					:items="upsert.items"
+					:on-open="onOpenUpsert"
+					:on-submit="onSubmit"
+				/>
 			</cl-crud>
 		</el-container>
 	</el-container>
@@ -72,7 +67,7 @@
 <script lang="ts">
 import { defineComponent, inject, reactive, ref } from "vue";
 import { useRefs } from "/@/cool";
-import { QueryList, Table, Upsert } from "@cool-vue/crud/types";
+import { Table, Upsert } from "@cool-vue/crud/types";
 import { ElMessage } from "element-plus";
 import { Delete, Edit } from "@element-plus/icons-vue";
 
@@ -134,13 +129,88 @@ export default defineComponent({
 			]
 		});
 		const treeList = ref([]);
-		const list = ref<QueryList[]>([]);
-
 		const catId = ref<any>(0);
-		const catName = ref<string>("");
-		const catKey = ref<string>("");
-
+		const catName = ref<any>("");
 		const treeProps = ref({ label: "name" });
+		const categoryUpsert = reactive<Upsert>({
+			title: "添加字典",
+			items: [
+				{
+					prop: "name",
+					label: "字典名称",
+					span: 12,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请填写字典名称"
+						}
+					},
+					rules: {
+						required: true,
+						message: "字典名称不能为空"
+					}
+				},
+				{
+					prop: "key",
+					label: "字典标识",
+					span: 12,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请填写字典标识"
+						}
+					},
+					rules: {
+						required: true,
+						message: "字典标识不能为空"
+					}
+				},
+				{
+					prop: "remark",
+					label: "备注",
+					span: 24,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请填写备注",
+							type: "textarea",
+							rows: 4
+						}
+					}
+				},
+				{
+					prop: "status",
+					label: "状态",
+					value: true,
+					component: {
+						name: "el-radio-group",
+						options: [
+							{
+								label: "正常",
+								value: true
+							},
+							{
+								label: "禁用",
+								value: false
+							}
+						]
+					}
+				}
+			]
+		});
+		function categoryDelete(data: any) {
+			refs.value.categoryCrud.rowDelete(data);
+		}
+
+		function categoryClick(data: any) {
+			catId.value = data.id;
+			catName.value = data.name;
+			refs.value.crud.refresh({ cid: catId });
+		}
+
+		function categoryEdit(data: any) {
+			refs.value.categoryCrud.rowEdit(data);
+		}
 
 		const upsert = reactive<Upsert>({
 			items: [
@@ -157,21 +227,6 @@ export default defineComponent({
 					rules: {
 						required: true,
 						message: "名称不能为空"
-					}
-				},
-				{
-					prop: "cid",
-					label: "字典分类",
-					component: {
-						name: "el-select",
-						props: {
-							placeholder: "请选择分类"
-						},
-						options: list
-					},
-					rules: {
-						required: true,
-						message: "分类必选"
 					}
 				},
 				{
@@ -225,24 +280,10 @@ export default defineComponent({
 			]
 		});
 
-		function changeCategory(categoryId: any, categoryKey: string, categoryName: string) {
-			catId.value = categoryId;
-			catKey.value = categoryKey;
-			catName.value = categoryName;
-			list.value = [{ label: categoryName, value: categoryId }];
-			refresh({ cid: categoryId });
-		}
-
 		// crud 加载
 		async function onLoad({ ctx, app }: any) {
 			ctx.service(service.system.dict).done();
-			const cats = await service.system.dictCategory.list({ size: 1 });
-			if (cats.list.length) {
-				catId.value = cats.list[0].id;
-				catKey.value = cats.list[0].key;
-				catName.value = cats.list[0].name;
-				app.refresh({ cid: catId });
-			}
+			app.refresh({ cid: catId });
 		}
 
 		// crud 加载
@@ -251,16 +292,12 @@ export default defineComponent({
 			app.refresh();
 		}
 
-		// 刷新列表
-		function refresh(params: any) {
-			refs.value.crud.refresh(params);
-		}
-
 		// 分类数据刷新回调逻辑
 		async function onCategoryRefresh(params: any, { next }: any) {
 			const { list } = await next(params);
+			catId.value = list[0].id;
+			catName.value = list[0].name;
 			treeList.value = list;
-			console.log(list);
 		}
 
 		// 刷新监听
@@ -277,12 +314,10 @@ export default defineComponent({
 					return e;
 				})
 			);
-		}
-
-		// 多选监听
-		function onSelectionChange(selection: any[]) {
-			console.log("selection", selection);
-			selects.ids = selection.map((e) => e.id);
+			if (params.cid === 0) {
+				refs.value.tree.setCurrentKey(catId.value);
+				refs.value.crud.refresh({ cid: catId });
+			}
 		}
 
 		function onOpenUpsert() {
@@ -292,99 +327,20 @@ export default defineComponent({
 			}
 		}
 
-		function categoryEdit() {
-			refs.value.form.open({
-				title: "添加分类",
-				width: "600px",
-				items: [
-					{
-						prop: "name",
-						label: "字典名称",
-						span: 12,
-						component: {
-							name: "el-input",
-							props: {
-								placeholder: "请填写字典名称"
-							}
-						},
-						rules: {
-							required: true,
-							message: "字典名称不能为空"
-						}
-					},
-					{
-						prop: "key",
-						label: "字典标识",
-						span: 12,
-						component: {
-							name: "el-input",
-							props: {
-								placeholder: "请填写字典标识"
-							}
-						},
-						rules: {
-							required: true,
-							message: "字典标识不能为空"
-						}
-					},
-					{
-						prop: "remark",
-						label: "备注",
-						span: 24,
-						component: {
-							name: "el-input",
-							props: {
-								placeholder: "请填写备注",
-								type: "textarea",
-								rows: 4
-							}
-						}
-					},
-					{
-						prop: "status",
-						label: "状态",
-						value: true,
-						component: {
-							name: "el-radio-group",
-							options: [
-								{
-									label: "正常",
-									value: true
-								},
-								{
-									label: "禁用",
-									value: false
-								}
-							]
-						}
-					}
-				],
-				on: {
-					submit: (data: any, { done, close }: any) => {
-						let next = null;
-
-						if (!item.id) {
-							next = service.space.type.add(data);
-						} else {
-							next = service.space.type.update({
-								...data,
-								id: item.id
-							});
-						}
-
-						next.then(() => {
-							close();
-						}).catch((err: string) => {
-							ElMessage.error(err);
-							done();
-						});
-					}
-				}
+		function onSubmit(isEdit, data, { done, close, next }) {
+			next({
+				...data,
+				cid: catId.value
 			});
+			close();
 		}
 
 		return {
+			onSubmit,
+			categoryClick,
+			categoryUpsert,
 			categoryEdit,
+			categoryDelete,
 			treeProps,
 			treeList,
 			service,
@@ -392,16 +348,12 @@ export default defineComponent({
 			table,
 			upsert,
 			setRefs,
-			changeCategory,
 			onLoad,
 			onCategoryLoad,
-			refresh,
 			onRefresh,
 			onCategoryRefresh,
 			catId,
 			catName,
-			catKey,
-			onSelectionChange,
 			onOpenUpsert
 		};
 	}

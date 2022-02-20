@@ -49,14 +49,34 @@ axios.interceptors.request.use(
 		}
 		if (
 			config.method == "post" &&
+			config.url.includes("/list") &&
 			config.data !== undefined &&
 			Object.keys(config.data).length
 		) {
 			config.data["params"] = {};
 			for (const configKey in config.data) {
+				if (configKey === "params") {
+					continue;
+				}
 				if (config.data.hasOwnProperty(configKey) && configKey.startsWith("params.")) {
 					config.data.params[configKey.replace("params.", "")] = config.data[configKey];
 					delete config.data[configKey];
+				} else {
+					if (
+						![
+							"page",
+							"size",
+							"order",
+							"sort",
+							"keyWord",
+							"keyword",
+							"keywords",
+							"_isExport"
+						].includes(configKey)
+					) {
+						config.data.params[configKey] = config.data[configKey];
+						// delete config.data[configKey];
+					}
 				}
 			}
 			if (Object.keys(config.data.params).length === 0) {
