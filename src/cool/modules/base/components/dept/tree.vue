@@ -100,12 +100,12 @@ export default defineComponent({
 
 		// 允许托的规则
 		function allowDrag({ data }: any) {
-			return data.parentId;
+			return data.parent_id;
 		}
 
 		// 允许放的规则
 		function allowDrop(_: any, dropNode: any) {
-			return dropNode.data.parentId;
+			return dropNode.data.parent_id;
 		}
 
 		// 刷新
@@ -130,8 +130,12 @@ export default defineComponent({
 
 		// 编辑部门
 		function rowEdit(e: any) {
+			refs.value.form.clear(); // 清除表单值， 防止缓存数据
+			console.log(e);
 			const method = e.id ? "update" : "add";
-
+			if (typeof e.parentName === "undefined") {
+				e.parentName = "顶级部门";
+			}
 			refs.value.form.open({
 				title: "编辑部门",
 				width: "550px",
@@ -156,8 +160,8 @@ export default defineComponent({
 					},
 					{
 						label: "上级部门",
-						prop: "parentId",
-						value: e.parentName || "...",
+						prop: "parent_id",
+						value: e.parentName,
 						component: {
 							name: "el-input",
 							props: {
@@ -166,9 +170,43 @@ export default defineComponent({
 						}
 					},
 					{
+						prop: "leader_name",
+						label: "负责人",
+						value: e.leader_name,
+						component: {
+							name: "el-input",
+							props: {
+								placeholder: "请填写负责人"
+							}
+						}
+					},
+					{
+						prop: "leader_phone",
+						label: "联系电话",
+						value: e.leader_phone,
+						component: {
+							name: "el-input",
+							props: {
+								placeholder: "请填写电话"
+							}
+						}
+					},
+					{
+						prop: "email",
+						label: "邮箱",
+						value: e.email,
+						component: {
+							name: "el-input",
+							props: {
+								placeholder: "请填写邮箱"
+							}
+						}
+					},
+					{
 						label: "排序",
-						prop: "orderNum",
-						value: e.orderNum || 0,
+						prop: "listorder",
+						value: e.listorder || 0,
+						span: 6,
 						component: {
 							name: "el-input-number",
 							props: {
@@ -177,16 +215,31 @@ export default defineComponent({
 								max: 100
 							}
 						}
+					},
+					{
+						prop: "status",
+						label: "状态",
+						value: e.status || false,
+						component: {
+							name: "el-radio-group",
+							options: [
+								{
+									label: "正常",
+									value: true
+								},
+								{
+									label: "禁用",
+									value: false
+								}
+							]
+						}
 					}
 				],
 				on: {
 					submit: (data: any, { done, close }: any) => {
-						service.system.dept[method]({
-							id: e.id,
-							parentId: e.parentId,
-							name: data.name,
-							orderNum: data.orderNum
-						})
+						data.id = e.id;
+						data.parent_id = e.parent_id;
+						service.system.department[method](data)
 							.then(() => {
 								ElMessage.success(`新增部门${data.name}成功`);
 								close();
@@ -204,7 +257,7 @@ export default defineComponent({
 		// 删除部门
 		function rowDel(e: any) {
 			const del = async (f: boolean) => {
-				await service.system.dept
+				await service.system.department
 					.delete({
 						ids: [e.id],
 						deleteUser: f
@@ -250,7 +303,7 @@ export default defineComponent({
 
 						const deep = (list: any[], pid: any) => {
 							list.forEach((e) => {
-								e.parentId = pid;
+								e.parent_id = pid;
 								ids.push(e);
 
 								if (e.children && isArray(e.children)) {
@@ -260,13 +313,13 @@ export default defineComponent({
 						};
 
 						deep(list.value, null);
-
-						await service.system.dept
+						console.log("order");
+						await service.system.department
 							.order(
 								ids.map((e, i) => {
 									return {
 										id: e.id,
-										parentId: e.parentId,
+										parent_id: e.parent_id,
 										orderNum: i
 									};
 								})
@@ -290,7 +343,7 @@ export default defineComponent({
 		// 右键菜单
 		function openCM(e: any, d?: any, n?: any) {
 			if (!d) {
-				d = list.value[0] || {};
+				d = {};
 			}
 
 			ContextMenu.open(e, {
@@ -303,7 +356,7 @@ export default defineComponent({
 							rowEdit({
 								name: "",
 								parentName: d.name,
-								parentId: d.id
+								parent_id: d.id
 							});
 							done();
 						}
@@ -319,7 +372,7 @@ export default defineComponent({
 					{
 						label: "删除",
 						"suffix-icon": "el-icon-delete",
-						hidden: !d.parentId,
+						hidden: !d.parent_id,
 						callback: (_: any, done: Function) => {
 							rowDel(d);
 							done();
