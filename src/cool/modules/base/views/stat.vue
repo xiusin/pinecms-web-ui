@@ -47,8 +47,12 @@
 								<td>{{ state.local_ip }}</td>
 								<td>外网IP</td>
 								<td>
-									{{ state.out_ip.IP }} ({{ state.out_ip.Address.Province
-									}}{{ state.out_ip.Address.City }}{{ state.out_ip.ISP }})
+									<template v-if="state.out_ip">
+										{{ state.out_ip.IP }} ({{ state.out_ip.Address.Province
+										}}{{ state.out_ip.Address.City }}{{ state.out_ip.ISP }})
+									</template>
+									<template v-else>未知</template>
+
 								</td>
 							</tr>
 						</table>

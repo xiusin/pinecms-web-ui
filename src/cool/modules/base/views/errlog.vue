@@ -30,8 +30,15 @@
 		</el-row>
 
 		<cl-dialog title="详细日志" v-model="detail.show">
-			<pre style="font-size: 13px">
-				{{ detail.message.replace("				[", "[") }}
+			<pre
+				style="
+					font-size: 13px;
+					font-family: 'Courier New', Courier, monospace;
+					line-height: 20px;
+					white-space: pre-wrap;
+				"
+			>
+				{{ detail.message }}
 			</pre
 			>
 		</cl-dialog>
@@ -103,7 +110,8 @@ export default defineComponent({
 		});
 
 		function detailDialog(scope: any) {
-			detail.value.message = scope.row.message;
+			detail.value.message = scope.row.message.replaceAll("				[", "[");
+			console.log(detail.value);
 			detail.value.show = true;
 		}
 

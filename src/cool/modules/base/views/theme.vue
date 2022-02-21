@@ -1,7 +1,8 @@
 <template>
 	<el-row :gutter="20">
 		<el-col :span="4" v-for="(o, index) in themeList" :key="index">
-			<el-card :body-style="{ padding: '0px' }">
+			<el-card :body-style="{ padding: '0px' }" style="border: 2px solid red">
+				<el-checkbox style="position: absolute; z-index: 8;" size="medium" />
 				<img :src="baseUrl + '/assets/thumb?id=' + o.dir" class="image" />
 				<div style="padding: 14px">
 					<span>{{ o.name }}</span>
