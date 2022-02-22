@@ -357,8 +357,9 @@ export default defineComponent({
 					return item;
 				});
 				advItemList.value = data.search_fields || [];
-				console.log(advItemList.value);
 				upsert.items = data.upset_comps;
+				console.log("upsert.items", upsert.items);
+
 				table.value = data;
 				table.value?.columns.push({
 					label: "操作",

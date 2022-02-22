@@ -85,7 +85,7 @@ export default {
 		},
 		showInput() {
 			this.inputVisible = true;
-			this.$nextTick((_) => {
+			this.$nextTick(() => {
 				this.$refs.saveTagInput.$refs.input.focus();
 			});
 		},
@@ -100,7 +100,7 @@ export default {
 		},
 		editTag(tag, index) {
 			this.num = index;
-			this.$nextTick((_) => {
+			this.$nextTick(() => {
 				this.$refs.editInput[0].focus();
 			});
 			this.words = tag;

@@ -80,7 +80,7 @@ export default class BaseService {
 
 	update(data: any) {
 		return this.request({
-			url: "/update",
+			url: "/edit",
 			method: "POST",
 			data
 		});

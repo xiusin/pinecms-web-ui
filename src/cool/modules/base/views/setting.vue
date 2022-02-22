@@ -11,7 +11,9 @@
 					><cl-table v-bind="table"
 				/></el-tab-pane>
 				<div style="padding: 10px 0; text-align: right" v-if="tab === '邮箱设置'">
-					<el-button size="mini" type="info" @click="sendTestEmail">测试发送邮件</el-button>
+					<el-button size="mini" type="info" @click="sendTestEmail"
+						>测试发送邮件</el-button
+					>
 					<cl-form :ref="setRefs('emailForm')" />
 				</div>
 			</el-tabs>
@@ -286,6 +288,7 @@ export default defineComponent({
 
 .cl-crud > .topBtn {
 	position: absolute;
+	z-index: 888;
 	right: 20px;
 	top: 20px;
 }

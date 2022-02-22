@@ -24,14 +24,17 @@ export default defineComponent({
 	emits: ["update:modelValue"],
 
 	setup(props, { emit }) {
+		console.log("cms_checkbox", props);
+
 		const checkList = ref([]);
 		try {
-			checkList.value = props.modelValue.split(",");
+			checkList.value = props.modelValue.filter(Boolean).split(",");
 		} catch (e) {
 			checkList.value = [];
 		}
 
 		function changeVal(val) {
+			val = val.filter(Boolean);
 			emit("update:modelValue", val.join(","));
 		}
 
