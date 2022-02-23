@@ -171,6 +171,24 @@ export default defineComponent({
 		// 	enableAutoSave: false
 		// };
 
+
+		// let renders = {
+		// 	singleImage: ({ h, scope }) => {
+		// 		console.log(scope)
+		// 		return h("img", {
+		// 				props: {
+		// 					fit: "contain",
+		// 					lazy: true,
+		// 				},
+		// 				src: scope.thumb
+		// 			},
+		// 		);
+		// 	}
+		// };
+
+
+
+
 		const service = inject<any>("service");
 
 		const { refs, setRefs } = useRefs();
@@ -358,7 +376,6 @@ export default defineComponent({
 				});
 				advItemList.value = data.search_fields || [];
 				upsert.items = data.upset_comps;
-				console.log("upsert.items", upsert.items);
 
 				table.value = data;
 				table.value?.columns.push({

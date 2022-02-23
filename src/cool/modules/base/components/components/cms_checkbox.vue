@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, watch, ref } from "vue";
 
 export default defineComponent({
 	name: "cms-checkbox",
@@ -24,18 +24,28 @@ export default defineComponent({
 	emits: ["update:modelValue"],
 
 	setup(props, { emit }) {
-		console.log("cms_checkbox", props);
+		let checkList = ref<String[]>([]);
 
-		const checkList = ref([]);
-		try {
-			checkList.value = props.modelValue.filter(Boolean).split(",");
-		} catch (e) {
-			checkList.value = [];
-		}
+		watch(
+			() => props.modelValue,
+			() => {
+				try {
+					checkList.value = props.modelValue.split(",").filter(Boolean);
+				} catch (e) {
+					checkList.value = [];
+				}
+			}
+		);
 
-		function changeVal(val) {
+		function changeVal(val: String[]) {
 			val = val.filter(Boolean);
 			emit("update:modelValue", val.join(","));
+		}
+
+		try {
+			checkList.value = props.modelValue.split(",").filter(Boolean);
+		} catch (e) {
+			checkList.value = [];
 		}
 
 		return { checkList, props, changeVal };

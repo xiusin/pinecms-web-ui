@@ -264,16 +264,13 @@ export default defineComponent({
 		// 上传成功
 		function onSuccess(res: any, file: ElFile) {
 			const item = list.value.find((e: any) => file.uid == e.uid);
-			console.log("onSuccess", res);
 			if (item) {
-				item.url = res.data;
-
-				service.space.info
-					.add({
-						url: res.data,
-						type: item.type,
-						classifyId: item.classifyId
-					})
+				item.url = res.data.url;
+				let data = res.data;
+				data.classifyId = item.classifyId;
+				data.type = item.type;
+				data.original = data.originalName;
+				service.space.info.add(data)
 					.then((res: any) => {
 						item.loading = false;
 						item.id = res.id;

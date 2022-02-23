@@ -37,15 +37,12 @@
 <script>
 export default {
 	name: "input-tags",
-	model: {
-		prop: "tagList",
-		event: "input"
-	},
 	props: {
-		tagList: {
-			type: Array,
-			default() {
-				return [];
+		// 表单值
+		modelValue: {
+			type: String,
+			default: () => {
+				return "";
 			}
 		},
 		theme: {
@@ -58,7 +55,8 @@ export default {
 			inputVisible: false,
 			inputValue: "",
 			num: -1,
-			words: ""
+			words: "",
+			tagList: []
 		};
 	},
 	computed: {
@@ -67,12 +65,17 @@ export default {
 				return this.tagList;
 			},
 			set(tagList) {
-				this.$emit("input", tagList);
+				this.$emit("update:modelValue", tagList.join(","));
 			}
 		}
 	},
-	mounted() {
-		console.log();
+	watch: {
+		modelValue: {
+			handler(val) {
+				console.log(val);
+				this.tagList = val.split(",").filter(Boolean);
+			}
+		}
 	},
 	methods: {
 		// 数组去重
