@@ -33,8 +33,89 @@ export default defineComponent({
 	name: "sys-setting",
 	setup() {
 		const service = inject<any>("service");
-		const { refs, setRefs } = useRefs();
+
+		const valueEditor = ref<any>("el-input")
+
 		const list = ref<QueryList[]>([]);
+
+		const upsetItem = ref([
+			{
+				prop: "form_name",
+				label: "名称",
+				component: {
+					name: "el-input",
+					props: {
+						placeholder: "请输入名称"
+					}
+				},
+				rules: {
+					required: true,
+					message: "名称不能为空"
+				}
+			},
+			{
+				prop: "group",
+				label: "分组",
+				component: {
+					name: "el-select",
+					props: {
+						clearable: true,
+						filterable: true,
+						allowCreate: true,
+						placeholder: "请选择分组或创建新分组"
+					},
+					options: list
+				},
+				rules: {
+					required: true,
+					message: "名称不能为空"
+				}
+			},
+
+			{
+				prop: "key",
+				label: "键名",
+				component: {
+					name: "el-input",
+					props: {
+						placeholder: "请输入Key"
+					}
+				},
+				rules: {
+					required: true,
+					message: "Key不能为空"
+				}
+			},
+			{
+				prop: "value",
+				label: "值",
+				component: "cms-map-editor"
+			},
+			{
+				prop: "listorder",
+				label: "排序",
+				component: {
+					name: "el-input",
+					props: {
+						placeholder: "请输入Key"
+					}
+				}
+			},
+			{
+				prop: "remark",
+				label: "备注",
+				component: {
+					name: "el-input",
+					props: {
+						placeholder: "请输入备注",
+						rows: 3,
+						type: "textarea"
+					}
+				}
+			}
+		]);
+
+		const { refs, setRefs } = useRefs();
 		const tab = ref<String>("");
 		// 表格配置
 		const table = reactive<Table>({
@@ -86,89 +167,7 @@ export default defineComponent({
 		// 新增编辑配置
 		const upsert = reactive<Upsert>({
 			width: "1000px",
-			items: [
-				{
-					prop: "form_name",
-					label: "名称",
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请输入名称"
-						}
-					},
-					rules: {
-						required: true,
-						message: "名称不能为空"
-					}
-				},
-				{
-					prop: "group",
-					label: "分组",
-					component: {
-						name: "el-select",
-						props: {
-							clearable: true,
-							filterable: true,
-							allowCreate: true,
-							placeholder: "请选择分组或创建新分组"
-						},
-						options: list
-					},
-					rules: {
-						required: true,
-						message: "名称不能为空"
-					}
-				},
-
-				{
-					prop: "key",
-					label: "键名",
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请输入Key"
-						}
-					},
-					rules: {
-						required: true,
-						message: "Key不能为空"
-					}
-				},
-				{
-					prop: "value",
-					label: "值",
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请输入备注",
-							rows: 3,
-							type: "textarea"
-						}
-					}
-				},
-				{
-					prop: "listorder",
-					label: "排序",
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请输入Key"
-						}
-					}
-				},
-				{
-					prop: "remark",
-					label: "备注",
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请输入备注",
-							rows: 3,
-							type: "textarea"
-						}
-					}
-				}
-			]
+			items: upsetItem.value
 		});
 
 		// 刷新列表
@@ -193,7 +192,12 @@ export default defineComponent({
 			await app.refresh({ "params.group": tab.value });
 		}
 		// 监听打开
-		function onUpsertOpen(isEdit: boolean, data: any) {}
+		function onUpsertOpen(isEdit: boolean, data: any) {
+			console.log(data.editor, data.value)
+			if (!data.editor) data.editor = "el-input"
+			valueEditor.value = ["cms-map-editor", "el-input"][Math.floor(Math.random() * 2)];
+			console.log(valueEditor.value);
+		}
 
 		function sendTestEmail() {
 			refs.value.emailForm.open({

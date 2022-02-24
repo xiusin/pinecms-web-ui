@@ -13,23 +13,7 @@
 				<cl-flex1 />
 				<cl-pagination />
 			</el-row>
-			<cl-upsert v-bind="upsert">
-				<template #slot-dictKey="{ scope }">
-					<el-select
-						:filterable="true"
-						placeholder="请选择字典类型"
-						:automatic-dropdown="true"
-						size="mini"
-					>
-						<el-option
-							v-for="(item, idx) in dictCatRef"
-							:key="idx + '-' + item.value"
-							:value="item.value"
-							:label="item.label"
-						/>
-					</el-select>
-				</template>
-			</cl-upsert>
+			<cl-upsert v-bind="upsert" />
 		</cl-crud>
 
 		<cl-form :ref="setRefs('form')" />
@@ -67,8 +51,6 @@ export default defineComponent({
 				});
 			}
 		});
-
-		const dictCatRef = ref([]);
 
 		const dict = [
 			{
@@ -393,52 +375,51 @@ export default defineComponent({
 						placeholder: "自定义渲染, 用于替换默认渲染信息, Render函数, json配置等"
 					}
 				},
-				{
-					prop: "is_dict",
-					label: "字典",
-					span: 4,
-					value: true,
-					flex: false,
-					hidden: ({ scope }: any) => fn(scope),
-					component: {
-						name: "el-checkbox",
-						"true-label": true,
-						"false-label": false
-					}
-				},
+				// {
+				// 	prop: "is_dict",
+				// 	label: "字典",
+				// 	span: 4,
+				// 	value: true,
+				// 	flex: false,
+				// 	hidden: ({ scope }: any) => fn(scope),
+				// 	component: {
+				// 		name: "el-checkbox",
+				// 		"true-label": true,
+				// 		"false-label": false
+				// 	}
+				// },
 				{
 					prop: "dict_key",
 					label: "类型",
 					span: 20,
-					hidden: ({ scope }: any) => {
-						if (!fn(scope)) {
-							return !scope.is_dict;
-						} else {
-							return true;
-						}
-					},
+					// hidden: ({ scope }: any) => {
+					// 	if (!fn(scope)) {
+					// 		return !scope.is_dict;
+					// 	} else {
+					// 		return true;
+					// 	}
+					// },
 					component: {
-						name: "el-select",
-						options: dictCatRef
+						name: "cms-dict-category"
 					}
 				},
-				{
-					prop: "datasource",
-					label: "数据源",
-					span: 20,
-					hidden: ({ scope }: any) => {
-						if (!fn(scope)) {
-							return scope.is_dict;
-						} else {
-							return true;
-						}
-					},
-					component: {
-						name: "el-input",
-						type: "textarea",
-						placeholder: "仅在下拉 级联， 字典类型接口可用"
-					}
-				},
+				// {
+				// 	prop: "datasource",
+				// 	label: "数据源",
+				// 	span: 20,
+				// 	hidden: ({ scope }: any) => {
+				// 		if (!fn(scope)) {
+				// 			return scope.is_dict;
+				// 		} else {
+				// 			return true;
+				// 		}
+				// 	},
+				// 	component: {
+				// 		name: "el-input",
+				// 		type: "textarea",
+				// 		placeholder: "仅在下拉 级联， 字典类型接口可用"
+				// 	}
+				// },
 				{
 					prop: "validator",
 					label: "验证规则",
@@ -474,10 +455,10 @@ export default defineComponent({
 			);
 		};
 
-		// 拉取字典
-		service.system.dictCategory.select().then((data: any[]) => {
-			dictCatRef.value = data;
-		});
+		// // 拉取字典
+		// service.system.dictCategory.select().then((data: any[]) => {
+		// 	dictCatRef.value = data;
+		// });
 
 		async function onRefresh(params: any, { next, render }: any) {
 			let { list } = await next({
@@ -494,7 +475,7 @@ export default defineComponent({
 
 		return {
 			refs,
-			dictCatRef,
+			// dictCatRef,
 			table,
 			upsert,
 			onRefresh,

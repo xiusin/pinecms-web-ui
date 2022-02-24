@@ -24,6 +24,10 @@ import InputTags from "./input-tags/input_tags.vue";
 import CmsCheckbox from "./components/cms_checkbox.vue";
 import CmsRadio from "./components/cms_radio.vue";
 import CmsImage from "./components/cms_image.vue";
+import CmsDictCategory from "./components/cms_dict_category.vue";
+import CmsDict from "./components/cms_dict.vue";
+import CmsCity from "./components/cms_city.vue";
+import CmsMapEditor from "./components/cms_map_editor.vue";
 import FilterGroup from "./filter-group/filter-group.vue";
 
 export default {
@@ -54,4 +58,8 @@ export default {
 	CmsRadio,
 	FilterGroup,
 	CmsImage,
+	CmsDictCategory,
+	CmsDict,
+	CmsCity,
+	CmsMapEditor,
 };

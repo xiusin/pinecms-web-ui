@@ -419,6 +419,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.el-tree-node__label {
+	font-size: 12px;
+}
 .system-user {
 	.pane {
 		display: flex;
