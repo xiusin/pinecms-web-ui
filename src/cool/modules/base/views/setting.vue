@@ -1,6 +1,9 @@
 <template>
 	<cl-crud @load="onLoad" :ref="setRefs('crud')">
-		<el-row type="flex" class="topBtn"><cl-flex1 /><cl-add-btn /></el-row>
+		<el-row type="flex" class="topBtn">
+			<cl-flex1 />
+			<cl-add-btn />
+		</el-row>
 		<el-row>
 			<el-tabs style="width: 100%" v-model="tab">
 				<el-tab-pane
@@ -8,18 +11,19 @@
 					:label="item.label"
 					:key="index"
 					:name="item.label"
-					><cl-table v-bind="table"
-				/></el-tab-pane>
+				>
+					<cl-table v-bind="table" />
+				</el-tab-pane>
 				<div style="padding: 10px 0; text-align: right" v-if="tab === '邮箱设置'">
 					<el-button size="mini" type="info" @click="sendTestEmail"
-						>测试发送邮件</el-button
-					>
+						>测试发送邮件
+					</el-button>
 					<cl-form :ref="setRefs('emailForm')" />
 				</div>
 			</el-tabs>
 		</el-row>
 
-		<cl-upsert :ref="setRefs('upsert')" v-bind="upsert" @open="onUpsertOpen" />
+		<cl-upsert :sync="true" :ref="setRefs('upsert')" v-bind="upsert" @open="onUpsertOpen" />
 	</cl-crud>
 </template>
 
@@ -34,11 +38,11 @@ export default defineComponent({
 	setup() {
 		const service = inject<any>("service");
 
-		const valueEditor = ref<any>("el-input")
+		const valueEditor = ref<any>("el-input");
 
 		const list = ref<QueryList[]>([]);
 
-		const upsetItem = ref([
+		const upsetItem = reactive([
 			{
 				prop: "form_name",
 				label: "名称",
@@ -89,7 +93,7 @@ export default defineComponent({
 			{
 				prop: "value",
 				label: "值",
-				component: "cms-map-editor"
+				component: valueEditor
 			},
 			{
 				prop: "listorder",
@@ -119,12 +123,7 @@ export default defineComponent({
 		const tab = ref<String>("");
 		// 表格配置
 		const table = reactive<Table>({
-			props: {
-				"default-sort": {
-					prop: "listorder",
-					order: "descending"
-				}
-			},
+			props: { "default-sort": { prop: "listorder", order: "descending" } },
 			columns: [
 				{
 					label: "名称",
@@ -167,7 +166,7 @@ export default defineComponent({
 		// 新增编辑配置
 		const upsert = reactive<Upsert>({
 			width: "1000px",
-			items: upsetItem.value
+			items: upsetItem,
 		});
 
 		// 刷新列表
@@ -178,9 +177,7 @@ export default defineComponent({
 		watch(
 			() => tab.value,
 			(val) => {
-				refresh({
-					"params.group": val
-				});
+				refresh({ group: val });
 			}
 		);
 
@@ -189,14 +186,18 @@ export default defineComponent({
 			ctx.service(service.system.setting).done();
 			list.value = await service.system.setting.groupList();
 			tab.value = list.value[0].label;
-			await app.refresh({ "params.group": tab.value });
+			await app.refresh({ group: tab.value });
 		}
+
+		let ia = 0;
 		// 监听打开
 		function onUpsertOpen(isEdit: boolean, data: any) {
-			console.log(data.editor, data.value)
-			if (!data.editor) data.editor = "el-input"
-			valueEditor.value = ["cms-map-editor", "el-input"][Math.floor(Math.random() * 2)];
-			console.log(valueEditor.value);
+			console.log(data.editor, data.value);
+			if (!data.editor) data.editor = "el-input";
+			const cm = ["cms-map-editor", "el-input"][ia % 2];
+			console.log(cm);
+			valueEditor.value = cm;
+			ia++;
 		}
 
 		function sendTestEmail() {
