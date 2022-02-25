@@ -23,12 +23,12 @@
 			</el-tabs>
 		</el-row>
 
-		<cl-upsert :sync="true" :ref="setRefs('upsert')" v-bind="upsert" @open="onUpsertOpen" />
+		<cl-upsert :sync="true" :key="'key-' + componentKey" :ref="setRefs('upsert')" v-bind="upsert" @open="onOpen" />
 	</cl-crud>
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, reactive, ref, watch } from "vue";
+import {defineComponent, getCurrentInstance, inject, nextTick, reactive, ref, watch} from "vue";
 import { useRefs } from "/@/cool";
 import { CrudLoad, QueryList, Table, Upsert } from "@cool-vue/crud/types";
 import { ElMessage } from "element-plus";
@@ -38,11 +38,9 @@ export default defineComponent({
 	setup() {
 		const service = inject<any>("service");
 
-		const valueEditor = ref<any>("el-input");
-
 		const list = ref<QueryList[]>([]);
 
-		const upsetItem = reactive([
+		let upsetItem = ref([
 			{
 				prop: "form_name",
 				label: "名称",
@@ -75,7 +73,6 @@ export default defineComponent({
 					message: "名称不能为空"
 				}
 			},
-
 			{
 				prop: "key",
 				label: "键名",
@@ -93,7 +90,7 @@ export default defineComponent({
 			{
 				prop: "value",
 				label: "值",
-				component: valueEditor
+				component: "el-input"
 			},
 			{
 				prop: "listorder",
@@ -118,6 +115,8 @@ export default defineComponent({
 				}
 			}
 		]);
+
+		let { ctx } = getCurrentInstance()
 
 		const { refs, setRefs } = useRefs();
 		const tab = ref<String>("");
@@ -164,10 +163,9 @@ export default defineComponent({
 			]
 		});
 		// 新增编辑配置
-		const upsert = reactive<Upsert>({
-			width: "1000px",
-			items: upsetItem,
-		});
+		let upsert = reactive<Upsert>({width: "1000px", items: upsetItem.value,});
+
+		const componentKey = ref(0)
 
 		// 刷新列表
 		function refresh(params: any) {
@@ -181,23 +179,38 @@ export default defineComponent({
 			}
 		);
 
+		watch(
+			() => upsetItem.value,
+			(val) => {
+				upsert.items = upsetItem.value
+				console.log(componentKey)
+				upsert = reactive<Upsert>({width: "1000px", items: upsetItem.value,});
+			},
+			{
+				deep: true
+			}
+		);
+
 		// crud 加载
 		async function onLoad({ ctx, app }: CrudLoad) {
 			ctx.service(service.system.setting).done();
 			list.value = await service.system.setting.groupList();
 			tab.value = list.value[0].label;
-			await app.refresh({ group: tab.value });
 		}
 
-		let ia = 0;
 		// 监听打开
-		function onUpsertOpen(isEdit: boolean, data: any) {
-			console.log(data.editor, data.value);
+		function onOpen(isEdit: boolean, data: any) {
 			if (!data.editor) data.editor = "el-input";
-			const cm = ["cms-map-editor", "el-input"][ia % 2];
-			console.log(cm);
-			valueEditor.value = cm;
-			ia++;
+			try {
+				upsetItem.value[3].component = JSON.parse(data.editor);
+			} catch (e) {
+				console.log(e);
+				upsetItem.value[3].component = data.editor;
+			}
+			upsetItem.value[3].component= "cms-map-editor";
+			componentKey.value++;
+
+			console.log(upsetItem.value[3].component);
 		}
 
 		function sendTestEmail() {
@@ -275,7 +288,8 @@ export default defineComponent({
 			list,
 			tab,
 			refresh,
-			onUpsertOpen,
+			onOpen,
+			componentKey,
 			sendTestEmail
 		};
 	}

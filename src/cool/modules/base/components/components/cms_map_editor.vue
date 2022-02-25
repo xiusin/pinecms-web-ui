@@ -10,7 +10,7 @@
 		</el-col>
 		<el-col :span="12">
 			<el-input
-				size="mini"
+				size="small"
 				v-model="value[index].value"
 				placeholder="值"
 				:prefix-icon="Search"
@@ -19,14 +19,14 @@
 		<el-col :span="6">
 			<el-button
 				v-if="index === 0"
-				type="primary"
-				size="mini"
+				type="text"
+				size="small"
 				icon="el-icon-plus"
 				@click="addItem"
 			/>
 			<el-button
-				type="warning"
-				size="mini"
+				type="text"
+				size="small"
 				icon="el-icon-delete"
 				@click="deleteItem(index)"
 			/>

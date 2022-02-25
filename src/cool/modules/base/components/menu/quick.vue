@@ -26,7 +26,7 @@ export default defineComponent({
 			});
 
 			// 数据结构列表
-			const eps: any[] = await service.base.common.eps();
+			const eps: any[] = []; // await service.base.common.eps()
 			const entities: any[] = [];
 
 			for (const i in eps) {
