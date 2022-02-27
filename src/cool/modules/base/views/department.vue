@@ -142,8 +142,8 @@ export default defineComponent({
 			},
 			columns: [
 				{
-					prop: "listorder",
-					label: "排序值",
+					prop: "id",
+					label: "ID",
 					width: 80
 				},
 				{

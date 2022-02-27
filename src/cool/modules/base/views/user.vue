@@ -442,6 +442,12 @@ export default defineComponent({
 });
 </script>
 
+<style>
+.cl-dept-tree__node-label {
+	font-size: 12px;
+}
+</style>
+
 <style lang="scss" scoped>
 .system-user {
 	.pane {

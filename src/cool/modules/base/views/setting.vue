@@ -23,100 +23,28 @@
 			</el-tabs>
 		</el-row>
 
-		<cl-upsert :sync="true" :key="'key-' + componentKey" :ref="setRefs('upsert')" v-bind="upsert" @open="onOpen" />
+		<cl-upsert :ref="setRefs('upsert')" v-bind="upsert">
+			<template #slot-value="{ scope }">
+				<component :is="scope.editor" v-model="scope.value" :itemprop="scope.options" />
+			</template>
+		</cl-upsert>
 	</cl-crud>
 </template>
 
 <script lang="ts">
-import {defineComponent, getCurrentInstance, inject, nextTick, reactive, ref, watch} from "vue";
+import { defineComponent, inject, reactive, ref, watch } from "vue";
 import { useRefs } from "/@/cool";
 import { CrudLoad, QueryList, Table, Upsert } from "@cool-vue/crud/types";
 import { ElMessage } from "element-plus";
+import CmsMapEditor from "../components/components/cms_map_editor.vue";
 
 export default defineComponent({
 	name: "sys-setting",
+	components: { CmsMapEditor },
 	setup() {
 		const service = inject<any>("service");
 
 		const list = ref<QueryList[]>([]);
-
-		let upsetItem = ref([
-			{
-				prop: "form_name",
-				label: "名称",
-				component: {
-					name: "el-input",
-					props: {
-						placeholder: "请输入名称"
-					}
-				},
-				rules: {
-					required: true,
-					message: "名称不能为空"
-				}
-			},
-			{
-				prop: "group",
-				label: "分组",
-				component: {
-					name: "el-select",
-					props: {
-						clearable: true,
-						filterable: true,
-						allowCreate: true,
-						placeholder: "请选择分组或创建新分组"
-					},
-					options: list
-				},
-				rules: {
-					required: true,
-					message: "名称不能为空"
-				}
-			},
-			{
-				prop: "key",
-				label: "键名",
-				component: {
-					name: "el-input",
-					props: {
-						placeholder: "请输入Key"
-					}
-				},
-				rules: {
-					required: true,
-					message: "Key不能为空"
-				}
-			},
-			{
-				prop: "value",
-				label: "值",
-				component: "el-input"
-			},
-			{
-				prop: "listorder",
-				label: "排序",
-				component: {
-					name: "el-input",
-					props: {
-						placeholder: "请输入Key"
-					}
-				}
-			},
-			{
-				prop: "remark",
-				label: "备注",
-				component: {
-					name: "el-input",
-					props: {
-						placeholder: "请输入备注",
-						rows: 3,
-						type: "textarea"
-					}
-				}
-			}
-		]);
-
-		let { ctx } = getCurrentInstance()
 
 		const { refs, setRefs } = useRefs();
 		const tab = ref<String>("");
@@ -163,9 +91,86 @@ export default defineComponent({
 			]
 		});
 		// 新增编辑配置
-		let upsert = reactive<Upsert>({width: "1000px", items: upsetItem.value,});
-
-		const componentKey = ref(0)
+		let upsert = reactive<Upsert>({
+			width: "1000px",
+			items: [
+				{
+					prop: "form_name",
+					label: "名称",
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请输入名称"
+						}
+					},
+					rules: {
+						required: true,
+						message: "名称不能为空"
+					}
+				},
+				{
+					prop: "group",
+					label: "分组",
+					component: {
+						name: "el-select",
+						props: {
+							clearable: true,
+							filterable: true,
+							allowCreate: true,
+							placeholder: "请选择分组或创建新分组"
+						},
+						options: list
+					},
+					rules: {
+						required: true,
+						message: "名称不能为空"
+					}
+				},
+				{
+					prop: "key",
+					label: "键名",
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请输入Key"
+						}
+					},
+					rules: {
+						required: true,
+						message: "Key不能为空"
+					}
+				},
+				{
+					prop: "value",
+					label: "值",
+					component: {
+						name: "slot-value"
+					}
+				},
+				{
+					prop: "listorder",
+					label: "排序",
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请输入Key"
+						}
+					}
+				},
+				{
+					prop: "remark",
+					label: "备注",
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请输入备注",
+							rows: 3,
+							type: "textarea"
+						}
+					}
+				}
+			]
+		});
 
 		// 刷新列表
 		function refresh(params: any) {
@@ -179,38 +184,11 @@ export default defineComponent({
 			}
 		);
 
-		watch(
-			() => upsetItem.value,
-			(val) => {
-				upsert.items = upsetItem.value
-				console.log(componentKey)
-				upsert = reactive<Upsert>({width: "1000px", items: upsetItem.value,});
-			},
-			{
-				deep: true
-			}
-		);
-
 		// crud 加载
-		async function onLoad({ ctx, app }: CrudLoad) {
+		async function onLoad({ ctx }: CrudLoad) {
 			ctx.service(service.system.setting).done();
 			list.value = await service.system.setting.groupList();
 			tab.value = list.value[0].label;
-		}
-
-		// 监听打开
-		function onOpen(isEdit: boolean, data: any) {
-			if (!data.editor) data.editor = "el-input";
-			try {
-				upsetItem.value[3].component = JSON.parse(data.editor);
-			} catch (e) {
-				console.log(e);
-				upsetItem.value[3].component = data.editor;
-			}
-			upsetItem.value[3].component= "cms-map-editor";
-			componentKey.value++;
-
-			console.log(upsetItem.value[3].component);
 		}
 
 		function sendTestEmail() {
@@ -288,8 +266,6 @@ export default defineComponent({
 			list,
 			tab,
 			refresh,
-			onOpen,
-			componentKey,
 			sendTestEmail
 		};
 	}

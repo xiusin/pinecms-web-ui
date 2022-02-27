@@ -1,11 +1,10 @@
 <template>
-	<el-row v-for="(item, index) in value" :gutter="24">
+	<el-row v-for="(item, index) in value" :gutter="8">
 		<el-col v-if="type === 'map'" :span="6">
 			<el-input
-				size="mini"
+				size="small"
 				v-model="value[index].key"
 				placeholder="键"
-				:suffix-icon="Calendar"
 			/>
 		</el-col>
 		<el-col :span="12">
@@ -13,7 +12,6 @@
 				size="small"
 				v-model="value[index].value"
 				placeholder="值"
-				:prefix-icon="Search"
 			/>
 		</el-col>
 		<el-col :span="6">
@@ -24,19 +22,13 @@
 				icon="el-icon-plus"
 				@click="addItem"
 			/>
-			<el-button
-				type="text"
-				size="small"
-				icon="el-icon-delete"
-				@click="deleteItem(index)"
-			/>
+			<el-button type="text" size="small" icon="el-icon-delete" @click="deleteItem(index)" />
 		</el-col>
 	</el-row>
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, ref, watch } from "vue";
-import { Calendar, Search } from "@element-plus/icons-vue";
+import { defineComponent, ref, watch } from "vue";
 import { ElMessageBox } from "element-plus";
 
 export default defineComponent({
@@ -54,8 +46,13 @@ export default defineComponent({
 		const type = ref(props.type);
 
 		try {
-			value.value = JSON.parse(props.modelValue);
-		} catch (e) {
+			const obj = JSON.parse(props.modelValue);
+			value.value = [];
+			for (let key in obj) {
+				value.value.push({ key: key, value: obj[key] });
+			}
+		} catch (e) {}
+		if (value.value.length === 0) {
 			value.value = [{ key: "", value: "" }];
 		}
 
@@ -80,11 +77,17 @@ export default defineComponent({
 		watch(
 			() => value.value,
 			() => {
-				emit("update:modelValue", JSON.stringify(value.value));
-			}
+				let obj = {};
+				for (let i = 0; i < value.value.length; i++) {
+					obj[value.value[i].key] = value.value[i].value;
+				}
+				console.log(obj);
+				emit("update:modelValue", JSON.stringify(obj));
+			},
+			{ deep: true }
 		);
 
-		return { value, Calendar, Search, addItem, deleteItem, type };
+		return { value, addItem, deleteItem, type };
 	}
 });
 </script>

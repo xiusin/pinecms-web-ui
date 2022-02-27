@@ -108,11 +108,6 @@ export default defineComponent({
 			},
 			columns: [
 				{
-					prop: "listorder",
-					label: "排序",
-					width: 100
-				},
-				{
 					prop: "name",
 					label: "名称",
 					width: 170
@@ -328,7 +323,6 @@ export default defineComponent({
 			);
 			if (params.cid === 0) {
 				refs.value.tree.setCurrentKey(catId.value);
-				refs.value.crud.refresh({ cid: catId });
 			}
 		}
 
