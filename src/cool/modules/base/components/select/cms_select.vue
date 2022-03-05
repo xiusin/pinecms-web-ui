@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import {defineComponent, onMounted, ref, watch} from "vue";
 
 export default defineComponent({
 	name: "cms-select",
@@ -76,8 +76,12 @@ export default defineComponent({
 		if (typeof value.value === "number") {
 			defaultValue = 0;
 		}
-		console.log(defaultValue, props);
-		const optionArr = ref([]);
+		const optionArr = ref([{ label: props.placeholder, value: defaultValue }]);
+		watch(
+			() => props.modelValue,
+			(val) => (value.value = val)
+		);
+
 		if (props.service) {
 			onMounted(async () => {
 				optionArr.value = await props.service.select();

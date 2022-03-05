@@ -258,9 +258,11 @@ export default defineComponent({
 					label: "生日",
 					span: 12,
 					component: {
-						name: "el-input",
+						name: "el-date-picker",
 						props: {
-							placeholder: "用户名"
+							type: "date",
+							placeholder: "请选择生日",
+							valueFormat: "YYYY-MM-DD 00:00:00"
 						}
 					}
 				},
@@ -348,10 +350,6 @@ export default defineComponent({
 						}
 					},
 					rules: [
-						{
-							required: true,
-							message: "密码不能为空"
-						},
 						{
 							min: 6,
 							max: 16,
