@@ -321,22 +321,22 @@ export default defineComponent({
 						message: "角色不能为空"
 					}
 				},
-				{
-					prop: "department_id",
-					label: "所属部门",
-					span: 12,
-					value: 0,
-					component: {
-						name: "cms-select",
-						props: {
-							service: service.system.department
-						}
-					},
-					rules: {
-						required: true,
-						message: "角色不能为空"
-					}
-				},
+				// {
+				// 	prop: "department_id",
+				// 	label: "所属部门",
+				// 	span: 12,
+				// 	value: 0,
+				// 	component: {
+				// 		name: "cms-select",
+				// 		props: {
+				// 			service: service.system.department
+				// 		}
+				// 	},
+				// 	rules: {
+				// 		required: true,
+				// 		message: "角色不能为空"
+				// 	}
+				// },
 				{
 					prop: "password",
 					label: "密码",
