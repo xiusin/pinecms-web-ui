@@ -17,7 +17,8 @@ export default defineComponent({
 
 		// 刷新列表
 		async function refresh() {
-			return await service.system.dept.list().then(deepTree);
+			console.log(deepTree);
+			return await service.system.department.list().then(deepTree);
 		}
 
 		// 转移

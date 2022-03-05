@@ -45,11 +45,11 @@
 								@selection-change="onSelectionChange"
 							>
 								<!-- 头像 -->
-								<template #column-headImg="{ scope }">
+								<template #column-avatar="{ scope }">
 									<cl-avatar
 										shape="square"
 										size="medium"
-										:src="scope.row.headImg"
+										:src="scope.row.avatar"
 										:style="{ margin: 'auto' }"
 									/>
 								</template>
@@ -125,7 +125,7 @@ export default defineComponent({
 					width: 60
 				},
 				{
-					prop: "headImg",
+					prop: "avatar",
 					label: "头像"
 				},
 				{
@@ -195,7 +195,7 @@ export default defineComponent({
 			},
 			items: [
 				{
-					prop: "headImg",
+					prop: "avatar",
 					label: "头像",
 					span: 24,
 					component: {
@@ -232,27 +232,28 @@ export default defineComponent({
 						props: {
 							placeholder: "请填写姓名"
 						}
-					},
-					rules: [
-						{
-							required: true,
-							message: "姓名不能为空"
-						}
-					]
+					}
 				},
 
 				{
 					prop: "sex",
 					label: "性别",
 					span: 12,
+					value: 0,
 					component: {
-						name: "el-input",
-						props: {
-							placeholder: "用户名"
-						}
+						name: "el-radio-group",
+						options: [
+							{
+								label: "男",
+								value: 1
+							},
+							{
+								label: "女",
+								value: 0
+							}
+						]
 					}
 				},
-
 				{
 					prop: "birthday",
 					label: "生日",
@@ -276,7 +277,13 @@ export default defineComponent({
 						props: {
 							placeholder: "请填写邮箱"
 						}
-					}
+					},
+					rules: [
+						{
+							required: true,
+							message: "姓名不能为空"
+						}
+					]
 				},
 				{
 					prop: "phone",
@@ -321,22 +328,14 @@ export default defineComponent({
 						message: "角色不能为空"
 					}
 				},
-				// {
-				// 	prop: "department_id",
-				// 	label: "所属部门",
-				// 	span: 12,
-				// 	value: 0,
-				// 	component: {
-				// 		name: "cms-select",
-				// 		props: {
-				// 			service: service.system.department
-				// 		}
-				// 	},
-				// 	rules: {
-				// 		required: true,
-				// 		message: "角色不能为空"
-				// 	}
-				// },
+				{
+					prop: "city",
+					label: "城市",
+					span: 12,
+					component: {
+						name: "cl-distpicker"
+					}
+				},
 				{
 					prop: "password",
 					label: "密码",
@@ -405,13 +404,6 @@ export default defineComponent({
 							}
 						]
 					}
-				},
-				{
-					prop: "tips",
-					hidden: ":isEdit",
-					component: {
-						name: "slot-tips"
-					}
 				}
 			]
 		});
@@ -460,7 +452,7 @@ export default defineComponent({
 			}
 			next({
 				...data,
-				departmentId
+				department_id: departmentId
 			});
 		}
 		// 多选监听
