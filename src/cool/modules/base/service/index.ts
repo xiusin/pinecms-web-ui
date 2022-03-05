@@ -22,6 +22,7 @@ import SysDocument from "./system/document";
 import SysAdSpace from "./system/ad_space";
 import SysDepartment from "./system/department";
 import SysPosition from "./system/position";
+import SysLevel from "./system/level";
 import SysStat from "./system/stat";
 import SysTags from "./system/tags";
 import SysMember from "./system/member";
@@ -56,6 +57,7 @@ export default {
 		document: new SysDocument(),
 		department: new SysDepartment(),
 		position: new SysPosition(),
+		level: new SysLevel(),
 		stat: new SysStat(),
 		tags: new SysTags(),
 		member: new SysMember(),

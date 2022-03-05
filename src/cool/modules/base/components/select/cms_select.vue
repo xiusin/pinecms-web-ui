@@ -6,19 +6,20 @@
 		:multipleLimit="props.multipleLimit"
 		:automatic-dropdown="true"
 		:size="props.size"
-		:value="props.value"
+		v-model="value"
+		@change="changeValue"
 	>
 		<el-option
-			v-for="(item, idx) in props.options"
-			:key="idx + '-' + item.value"
-			:value="item.value"
-			:label="item.label"
+			v-for="(item, idx) in optionArr"
+			:key="idx + '-' + (item.value ?? item.id)"
+			:value="item.value ?? item.id"
+			:label="item.label ?? item.name ?? ''"
 		/>
 	</el-select>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 
 export default defineComponent({
 	name: "cms-select",
@@ -44,9 +45,9 @@ export default defineComponent({
 			type: Number,
 			default: 10
 		},
-		url: {
-			type: String,
-			default: ""
+		service: {
+			type: Object,
+			default: null
 		},
 		size: {
 			type: String,
@@ -58,26 +59,40 @@ export default defineComponent({
 		},
 		options: {
 			type: Array
+		},
+		modelValue: {
+			type: Object,
+			default: () => null
 		}
 	},
-
-	setup(props) {
+	emits: ["update:modelValue"],
+	setup(props, { emit }) {
 		const remoteMethod = (query: string) => {
 			if (query !== "") {
 			}
 		};
-
-		// TODO 远程加载资源
-		if (props.url) {
-			// todo 分为字典类型 或 完整api地址
-			onMounted(() => {
-				// 远程加载字典 或 其他表字典
+		let defaultValue: any = "";
+		const value = ref(props.modelValue);
+		if (typeof value.value === "number") {
+			defaultValue = 0;
+		}
+		console.log(defaultValue, props);
+		const optionArr = ref([]);
+		if (props.service) {
+			onMounted(async () => {
+				optionArr.value = await props.service.select();
+				optionArr.value.unshift({ label: props.placeholder, value: defaultValue });
 			});
 		}
-
+		function changeValue(value: any) {
+			emit("update:modelValue", value);
+		}
 		return {
 			props,
-			remoteMethod
+			remoteMethod,
+			optionArr,
+			changeValue,
+			value
 		};
 	}
 });

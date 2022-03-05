@@ -171,16 +171,16 @@ export default defineComponent({
 						}
 					]
 				},
-				{
-					prop: "lastlogintime",
-					label: "最后登录时间",
-					minWidth: 150
-				},
-				{
-					prop: "lastloginip",
-					label: "最后登录IP",
-					minWidth: 150
-				},
+				// {
+				// 	prop: "lastlogintime",
+				// 	label: "最后登录时间",
+				// 	minWidth: 150
+				// },
+				// {
+				// 	prop: "lastloginip",
+				// 	label: "最后登录IP",
+				// 	minWidth: 150
+				// },
 				{
 					type: "op",
 					buttons: ["edit", "delete"],
@@ -202,6 +202,7 @@ export default defineComponent({
 						name: "cl-upload",
 						props: {
 							text: "选择头像",
+							size: 100,
 							icon: "el-icon-picture"
 						}
 					}
@@ -209,7 +210,7 @@ export default defineComponent({
 				{
 					prop: "username",
 					label: "用户名",
-					span: 24,
+					span: 12,
 					component: {
 						name: "el-input",
 						props: {
@@ -239,6 +240,101 @@ export default defineComponent({
 						}
 					]
 				},
+
+				{
+					prop: "sex",
+					label: "性别",
+					span: 12,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "用户名"
+						}
+					}
+				},
+
+				{
+					prop: "birthday",
+					label: "生日",
+					span: 12,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "用户名"
+						}
+					}
+				},
+
+				{
+					prop: "email",
+					label: "邮箱",
+					span: 12,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请填写邮箱"
+						}
+					}
+				},
+				{
+					prop: "phone",
+					label: "手机",
+					span: 12,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请填写手机"
+						}
+					}
+				},
+				{
+					prop: "level_id",
+					label: "职级",
+					span: 12,
+					value: 0,
+					component: {
+						name: "cms-select",
+						props: {
+							service: service.system.level
+						}
+					},
+					rules: {
+						required: true,
+						message: "角色不能为空"
+					}
+				},
+				{
+					prop: "position_id",
+					label: "岗位",
+					span: 12,
+					value: 0,
+					component: {
+						name: "cms-select",
+						props: {
+							service: service.system.position
+						}
+					},
+					rules: {
+						required: true,
+						message: "角色不能为空"
+					}
+				},
+				{
+					prop: "department_id",
+					label: "所属部门",
+					span: 12,
+					value: 0,
+					component: {
+						name: "cms-select",
+						props: {
+							service: service.system.department
+						}
+					},
+					rules: {
+						required: true,
+						message: "角色不能为空"
+					}
+				},
 				{
 					prop: "password",
 					label: "密码",
@@ -252,6 +348,10 @@ export default defineComponent({
 						}
 					},
 					rules: [
+						{
+							required: true,
+							message: "密码不能为空"
+						},
 						{
 							min: 6,
 							max: 16,
@@ -275,17 +375,6 @@ export default defineComponent({
 					rules: {
 						required: true,
 						message: "角色不能为空"
-					}
-				},
-				{
-					prop: "email",
-					label: "邮箱",
-					span: 12,
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请填写邮箱"
-						}
 					}
 				},
 				{
