@@ -133,7 +133,8 @@ export default defineComponent({
 				},
 				{
 					label: "操作",
-					type: "op"
+					type: "op",
+					buttons: ["edit"]
 				}
 			]
 		});
