@@ -102,4 +102,12 @@ export default class BaseService {
 			data
 		});
 	}
+
+	select(params: any) {
+		return this.request({
+			url: "/select",
+			method: "GET",
+			params
+		});
+	}
 }

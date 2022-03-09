@@ -63,5 +63,5 @@ export default {
 	CmsDict,
 	CmsCity,
 	CmsMapEditor,
-	Monaco,
+	Monaco
 };

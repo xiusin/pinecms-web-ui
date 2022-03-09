@@ -45,11 +45,11 @@
 								@selection-change="onSelectionChange"
 							>
 								<!-- 头像 -->
-								<template #column-headImg="{ scope }">
+								<template #column-avatar="{ scope }">
 									<cl-avatar
 										shape="square"
 										size="medium"
-										:src="scope.row.headImg"
+										:src="scope.row.avatar"
 										:style="{ margin: 'auto' }"
 									/>
 								</template>
@@ -125,7 +125,7 @@ export default defineComponent({
 					width: 60
 				},
 				{
-					prop: "headImg",
+					prop: "avatar",
 					label: "头像"
 				},
 				{
@@ -171,16 +171,16 @@ export default defineComponent({
 						}
 					]
 				},
-				{
-					prop: "lastlogintime",
-					label: "最后登录时间",
-					minWidth: 150
-				},
-				{
-					prop: "lastloginip",
-					label: "最后登录IP",
-					minWidth: 150
-				},
+				// {
+				// 	prop: "lastlogintime",
+				// 	label: "最后登录时间",
+				// 	minWidth: 150
+				// },
+				// {
+				// 	prop: "lastloginip",
+				// 	label: "最后登录IP",
+				// 	minWidth: 150
+				// },
 				{
 					type: "op",
 					buttons: ["edit", "delete"],
@@ -195,13 +195,14 @@ export default defineComponent({
 			},
 			items: [
 				{
-					prop: "headImg",
+					prop: "avatar",
 					label: "头像",
 					span: 24,
 					component: {
 						name: "cl-upload",
 						props: {
 							text: "选择头像",
+							size: 100,
 							icon: "el-icon-picture"
 						}
 					}
@@ -209,7 +210,7 @@ export default defineComponent({
 				{
 					prop: "username",
 					label: "用户名",
-					span: 24,
+					span: 12,
 					component: {
 						name: "el-input",
 						props: {
@@ -231,6 +232,51 @@ export default defineComponent({
 						props: {
 							placeholder: "请填写姓名"
 						}
+					}
+				},
+
+				{
+					prop: "sex",
+					label: "性别",
+					span: 12,
+					value: 0,
+					component: {
+						name: "el-radio-group",
+						options: [
+							{
+								label: "男",
+								value: 1
+							},
+							{
+								label: "女",
+								value: 0
+							}
+						]
+					}
+				},
+				{
+					prop: "birthday",
+					label: "生日",
+					span: 12,
+					component: {
+						name: "el-date-picker",
+						props: {
+							type: "date",
+							placeholder: "请选择生日",
+							valueFormat: "YYYY-MM-DD 00:00:00"
+						}
+					}
+				},
+
+				{
+					prop: "email",
+					label: "邮箱",
+					span: 12,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请填写邮箱"
+						}
 					},
 					rules: [
 						{
@@ -238,6 +284,57 @@ export default defineComponent({
 							message: "姓名不能为空"
 						}
 					]
+				},
+				{
+					prop: "phone",
+					label: "手机",
+					span: 12,
+					component: {
+						name: "el-input",
+						props: {
+							placeholder: "请填写手机"
+						}
+					}
+				},
+				{
+					prop: "level_id",
+					label: "职级",
+					span: 12,
+					value: 0,
+					component: {
+						name: "cms-select",
+						props: {
+							service: service.system.level
+						}
+					},
+					rules: {
+						required: true,
+						message: "角色不能为空"
+					}
+				},
+				{
+					prop: "position_id",
+					label: "岗位",
+					span: 12,
+					value: 0,
+					component: {
+						name: "cms-select",
+						props: {
+							service: service.system.position
+						}
+					},
+					rules: {
+						required: true,
+						message: "角色不能为空"
+					}
+				},
+				{
+					prop: "city",
+					label: "城市",
+					span: 12,
+					component: {
+						name: "cl-distpicker"
+					}
 				},
 				{
 					prop: "password",
@@ -278,17 +375,6 @@ export default defineComponent({
 					}
 				},
 				{
-					prop: "email",
-					label: "邮箱",
-					span: 12,
-					component: {
-						name: "el-input",
-						props: {
-							placeholder: "请填写邮箱"
-						}
-					}
-				},
-				{
 					prop: "remark",
 					label: "备注",
 					span: 24,
@@ -317,13 +403,6 @@ export default defineComponent({
 								value: 0
 							}
 						]
-					}
-				},
-				{
-					prop: "tips",
-					hidden: ":isEdit",
-					component: {
-						name: "slot-tips"
 					}
 				}
 			]
@@ -373,7 +452,7 @@ export default defineComponent({
 			}
 			next({
 				...data,
-				departmentId
+				department_id: departmentId
 			});
 		}
 		// 多选监听
