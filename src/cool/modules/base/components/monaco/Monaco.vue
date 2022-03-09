@@ -66,7 +66,12 @@ font-size: 14px;
 }
 </style>
 <template>
-	<div ref="wrapper" :class="`monaco-with-tree${isFullScreen ? ' full-screen' : ''}`">
+	<div ref="wrapper" :class="`monaco-with-tree`">
+		<div ref="menu" class="monaco-menu-pane" />
+		<div class="monaco-right-pane">
+			<!-- monaco初始化的时候高度必须确定好，所以这里用visibility来隐藏 -->
+			<div ref="monaco"  />
+		</div>
 		<split-pane v-if="defaultSplitPercent" @resize="resize" :min-percent="minSplitPercent" :default-percent="defaultSplitPercent"
 					split="vertical" class="monaco-with-tree-splitter">
 			<template slot="paneL">
@@ -75,13 +80,8 @@ font-size: 14px;
 			<template slot="paneR">
 				<div class="monaco-right-pane">
 					<!-- insert-to-after：添加tab时插入到当前tab后面 -->
-					<vue-tabs-chrome ref="tab" theme="dark" v-model="currentTab" :tabs="tabs" insert-to-after />
-					<i @click="toggleFullScreen" :class="['btn-fullscreen', 'luyou-icon',
-                        isFullScreen ? 'icontuichuquanping' : 'iconquanping1',
-                        isFullScreen ? 'fullscreen' : '']"
-					/>
+					<vue3-tabs-chrome ref="tab" theme="dark" v-model="currentTab" :tabs="tabs" insert-to-after />
 					<!-- monaco初始化的时候高度必须确定好，所以这里用visibility来隐藏 -->
-					<monaco-editor />
 					<div ref="monaco" :style="{height: `calc(100% - ${tabHeight}px)`, visibility2: currentTab ? 'visible' : 'hidden'}" />
 
 					<div v-show="!currentTab" class="no-tab-pane" :style="{height: `calc(100% - ${tabHeight}px)`}">
@@ -94,18 +94,49 @@ font-size: 14px;
 </template>
 <script>
 
-import VueTabsChrome from 'vue-tabs-chrome';
+import Vue3TabsChrome from 'vue3-tabs-chrome';
 import NiceMonacoTree from 'nice-monaco-tree';
-import MonacoEditor from 'vue-monaco-editor';
 import SplitPane from '@vtian/vue3-split-panel'
+import * as monaco from 'monaco-editor';
 let monacoDiffEditor = null;
 let monacoEditor = null;
 let monacoTree = null;
+
+import 'vue3-tabs-chrome/dist/vue3-tabs-chrome.css'
+
+self.MonacoEnvironment = {
+	getWorker: function (workerId, label) {
+		const getWorkerModule = (moduleUrl, label) => {
+			return new Worker(self.MonacoEnvironment.getWorkerUrl(moduleUrl), {
+				name: label,
+				type: 'module'
+			});
+		};
+
+		switch (label) {
+			case 'json':
+				return getWorkerModule('/monaco-editor/esm/vs/language/json/json.worker?worker', label);
+			case 'css':
+			case 'scss':
+			case 'less':
+				return getWorkerModule('/monaco-editor/esm/vs/language/css/css.worker?worker', label);
+			case 'html':
+			case 'handlebars':
+			case 'razor':
+				return getWorkerModule('/monaco-editor/esm/vs/language/html/html.worker?worker', label);
+			case 'typescript':
+			case 'javascript':
+				return getWorkerModule('/monaco-editor/esm/vs/language/typescript/ts.worker?worker', label);
+			default:
+				return getWorkerModule('/monaco-editor/esm/vs/editor/editor.worker?worker', label);
+		}
+	}
+};
+
 export default {
 	components: {
-		VueTabsChrome,
+		Vue3TabsChrome,
 		SplitPane,
-		MonacoEditor,
 	},
 	props: {
 		files: {
@@ -126,8 +157,8 @@ export default {
 		getFileContent: {
 			type: Function,
 			default: filePath => {
-				// return `${filePath}-left`
-				return [`${filePath}-left`, `${filePath}-right`];
+				return `${filePath}-left`
+				// return [`${filePath}-left`, `${filePath}-right`];
 			},
 		},
 		getFileTitle: {
@@ -142,7 +173,7 @@ export default {
 	data() {
 		return {
 			tabHeight: 48,
-			defaultSplitPercent: 0, // 默认菜单分隔宽度百分比
+			defaultSplitPercent: 20, // 默认菜单分隔宽度百分比
 			minSplitPercent: 0, // 最小宽度百分比
 			currentTab: '', // 当前标签的key
 			tabs: [],
@@ -186,22 +217,24 @@ export default {
 	},
 	methods: {
 		initMonacoTree() {
-			console.log(this.files);
-			monacoTree = NiceMonacoTree.init(this.$refs.menu,  {
-				files: this.files,
-				onClick: (filePath, file, fileIcon) => {
-					this.openFile(filePath, file, fileIcon, true);
-				},
-				onDoubleClick: (filePath, file, fileIcon) => {
-					this.openFile(filePath, file, fileIcon, true);
-				},
-			});
-			monacoTree.expandAll();
-			setTimeout(() => {
-				if (this.defaultOpenFiles && this.defaultOpenFiles[0]) {
-					monacoTree.setSelection(this.defaultOpenFiles[0]);
-				}
-			});
+			console.log(this.$refs.menu);
+			this.$nextTick(() => {
+				monacoTree = NiceMonacoTree.init(this.$refs.menu,  {
+					files: this.files,
+					onClick: (filePath, file, fileIcon) => {
+						this.openFile(filePath, file, fileIcon, true);
+					},
+					onDoubleClick: (filePath, file, fileIcon) => {
+						this.openFile(filePath, file, fileIcon, true);
+					},
+				});
+				monacoTree.expandAll();
+				setTimeout(() => {
+					if (this.defaultOpenFiles && this.defaultOpenFiles[0]) {
+						monacoTree.setSelection(this.defaultOpenFiles[0]);
+					}
+				});
+			})
 		},
 		getMonacoTree() {
 			return monacoTree;
@@ -235,6 +268,7 @@ export default {
 						language,
 					});
 				} else {
+					console.log(monaco);
 					monacoDiffEditor = monaco.editor.createDiffEditor(this.$refs.monaco, {
 						// 禁用分割线resize
 						enableSplitViewResizing: false,
@@ -262,16 +296,16 @@ export default {
 				}
 			} else {
 				if (isDoubleClick) {
-					this.$refs.tab.addTab({
-						label: this.getFileTitle(filePath),
-						key: filePath,
-						closable: true,
-						// 默认的icon只支持传图片，这里我们直接使用monaco的icon class来实现图标展示
-						// 通过设置一个空的favicon来设置一个占位符
-						favicon: h => h('span'),
-						class: `monaco-icon-label ${fileIcon}`,
-					});
-					this.currentTab = filePath;
+					// this.$refs.tab.addTab({
+					// 	label: this.getFileTitle(filePath),
+					// 	key: filePath,
+					// 	closable: true,
+					// 	// 默认的icon只支持传图片，这里我们直接使用monaco的icon class来实现图标展示
+					// 	// 通过设置一个空的favicon来设置一个占位符
+					// 	favicon: h => h('span'),
+					// 	class: `monaco-icon-label ${fileIcon}`,
+					// });
+					// this.currentTab = filePath;
 				} else {
 				}
 			}
