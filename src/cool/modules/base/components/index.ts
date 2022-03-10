@@ -29,7 +29,8 @@ import CmsDict from "./components/cms_dict.vue";
 import CmsCity from "./components/cms_city.vue";
 import CmsMapEditor from "./components/cms_map_editor.vue";
 import FilterGroup from "./filter-group/filter-group.vue";
-import Monaco from "./monaco/Monaco.vue";
+// import MonacoEditor from "./monaco/MonacoEditor.vue";
+import MonacoTreeEditor from "./monaco-tree/MonacoTree.vue";
 
 export default {
 	Avatar,
@@ -63,5 +64,6 @@ export default {
 	CmsDict,
 	CmsCity,
 	CmsMapEditor,
-	Monaco
+	// MonacoEditor,
+	MonacoTreeEditor
 };

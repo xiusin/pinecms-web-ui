@@ -73,7 +73,7 @@ import TabChart from "./components/tab-chart.vue";
 import SalesRank from "./components/sales-rank.vue";
 import HotSearch from "./components/hot-search.vue";
 
-import Monaco from "../../cool/modules/base/components/monaco/Monaco.vue";
+import Monaco from "../../cool/modules/base/components/monaco/MonacoEditor.vue";
 
 export default defineComponent({
 	components: {
