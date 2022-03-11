@@ -4293,9 +4293,9 @@ vue-router@^4.0.5:
   dependencies:
     "@vue/devtools-api" "^6.0.0-beta.18"
 
-vue3-tabs-chrome@0.3.0:
+vue3-tabs-chrome@^0.3.0:
   version "0.3.0"
-  resolved "https://registry.npmmirror.com/vue3-tabs-chrome/-/vue3-tabs-chrome-0.3.0.tgz#ab68b7ea09d4c5acd66a5ce01771db897833db4b"
+  resolved "https://registry.yarnpkg.com/vue3-tabs-chrome/-/vue3-tabs-chrome-0.3.0.tgz#ab68b7ea09d4c5acd66a5ce01771db897833db4b"
   integrity sha512-siOpc6NBorrcoPVpI5CvhRIdF5isurEgqPOVznfEIP0l/lqkqes1qqlR0Yb6fbhIGJ5km8Ks48Ees4ygER2RSA==
   dependencies:
     core-js "^3.6.5"
