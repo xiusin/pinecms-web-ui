@@ -27,6 +27,7 @@ import CmsImage from "./components/cms_image.vue";
 import CmsDictCategory from "./components/cms_dict_category.vue";
 import CmsDict from "./components/cms_dict.vue";
 import CmsCity from "./components/cms_city.vue";
+import CmsMonacoTree from "./components/cms_monaco_tree.vue";
 import CmsMapEditor from "./components/cms_map_editor.vue";
 import FilterGroup from "./filter-group/filter-group.vue";
 // import MonacoEditor from "./monaco/MonacoEditor.vue";
@@ -64,6 +65,7 @@ export default {
 	CmsDict,
 	CmsCity,
 	CmsMapEditor,
+	CmsMonacoTree
 	// MonacoEditor,
 	// MonacoTreeEditor
 };

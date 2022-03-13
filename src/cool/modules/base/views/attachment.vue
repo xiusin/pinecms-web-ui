@@ -13,23 +13,15 @@
 			<cl-pagination />
 		</el-row>
 	</cl-crud>
-
-	<cl-dialog v-model="preview.visible" title="图片预览" :props="{ width: previewWidth }">
-		<img style="width: 100%" :src="preview.url" alt="" />
-	</cl-dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent, inject, onMounted, reactive } from "vue";
-import { ElImage } from "element-plus";
 import { useRefs } from "/@/cool";
 import { CrudLoad, Table } from "@cool-vue/crud/types";
 
 export default defineComponent({
 	name: "attachment",
-	components: {
-		ElImage
-	},
 	setup() {
 		const service = inject<any>("service");
 		const { refs, setRefs } = useRefs();
@@ -47,7 +39,7 @@ export default defineComponent({
 				$size /= 1024;
 				pos++;
 			}
-			return $size.toFixed(2) + unit[pos];
+			return $size.toFixed($dec) + unit[pos];
 		};
 
 		let previewWidth = {
@@ -56,6 +48,7 @@ export default defineComponent({
 		};
 
 		const table = reactive<Table>({
+			"context-menu": false,
 			columns: [
 				{
 					label: "源名称",
@@ -67,7 +60,7 @@ export default defineComponent({
 					label: "图片",
 					prop: "url",
 					component: {
-						name: "el-image",
+						name: "cms-image",
 						props: {
 							style: {
 								width: 40,
@@ -92,17 +85,7 @@ export default defineComponent({
 				},
 				{
 					label: "所属分类",
-					prop: "classifyId",
-					component: {
-						name: "el-image",
-						props: {
-							style: {
-								width: 40,
-								height: 40
-							},
-							fit: "contain"
-						}
-					}
+					prop: "classifyId"
 				},
 				{
 					label: "上传时间",

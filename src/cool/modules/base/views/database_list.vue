@@ -52,6 +52,11 @@ export default defineComponent({
 					width: 100
 				},
 				{
+					label: "字符集",
+					prop: "charset",
+					width: 100
+				},
+				{
 					label: "备注",
 					prop: "comment",
 					align: "left",
