@@ -4,7 +4,6 @@
 			<el-row type="flex">
 				<cl-refresh-btn />
 				<cl-add-btn />
-				<cl-upload-space accept=".jpg,.png,.txt" />
 			</el-row>
 			<el-row>
 				<cl-table v-bind="table" />
@@ -25,11 +24,9 @@ import { defineComponent, inject, reactive, ref } from "vue";
 import { useRefs } from "/@/cool";
 import { CrudLoad, Table, Upsert } from "@cool-vue/crud/types";
 import { useRoute } from "vue-router";
-import ClUploadSpace from "../../upload/components/space/index.vue";
 
 export default defineComponent({
 	name: "sys-table",
-	components: { ClUploadSpace },
 	setup() {
 		const service = inject<any>("service");
 		const { refs, setRefs } = useRefs();

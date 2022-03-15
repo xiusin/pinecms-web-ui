@@ -15,6 +15,7 @@ import "codemirror/addon/hint/show-hint.css";
 import "codemirror/addon/hint/javascript-hint";
 import "codemirror/mode/javascript/javascript";
 import "codemirror/mode/go/go";
+import "codemirror/mode/sql/sql";
 import "codemirror/mode/htmlmixed/htmlmixed";
 
 export default defineComponent({
