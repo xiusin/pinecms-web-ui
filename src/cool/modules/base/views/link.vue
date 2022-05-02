@@ -130,6 +130,7 @@ export default defineComponent({
 					order: "descending"
 				}
 			},
+			"context-menu": false,
 			columns: [
 				{
 					type: "selection",

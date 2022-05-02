@@ -75,10 +75,10 @@ export default defineComponent({
 		}
 
 		function addScript() {
-			ElMessageBox.prompt("", "新脚本名称", {
+			ElMessageBox.prompt("脚本请以.sh为后缀", "新脚本名称", {
 				confirmButtonText: "确定",
 				cancelButtonText: "取消",
-				inputPattern: /\w+\.gsh/,
+				inputPattern: /\w+\.sh/,
 				inputErrorMessage: "不可用的脚本名称"
 			})
 				.then(({ value }) => {
