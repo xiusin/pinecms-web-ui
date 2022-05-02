@@ -29,6 +29,7 @@ export default defineComponent({
 		const selects = ref<any>([]);
 		// 表格配置
 		const table = reactive<Table>({
+			"context-menu": false,
 			columns: [
 				{
 					type: "selection",

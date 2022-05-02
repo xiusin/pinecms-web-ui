@@ -12,29 +12,34 @@
 		<title>PinCMS 后台管理系统</title>
 		<link rel="icon" href="/favicon.ico" />
 		<style>
-			 html,
-			 body,
-			 #app {
-				 height: 100%;
-			 }
+			html,
+			body,
+			#app {
+				height: 100%;
+			}
 
 			* {
 				margin: 0;
 				padding: 0;
-				font-family: "Inter", sans-serif, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-				"Microsoft YaHei", "微软雅黑", Arial;
-				font-weight: 600;
+				font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+				"Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 			}
 
-			.preload {
+			.preload__wrap {
 				display: flex;
 				flex-direction: column;
 				height: 100%;
 				letter-spacing: 1px;
 				background-color: #2f3447;
+				position: fixed;
+				left: 0;
+				top: 0;
+				height: 100%;
+				width: 100%;
+				z-index: 9999;
 			}
 
-			.preload .container {
+			.preload__container {
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -44,7 +49,7 @@
 				flex-grow: 1;
 			}
 
-			.preload .name {
+			.preload__name {
 				font-size: 30px;
 				color: #fff;
 				letter-spacing: 5px;
@@ -52,29 +57,29 @@
 				margin-bottom: 30px;
 			}
 
-			.preload .title {
+			.preload__title {
 				color: #fff;
 				font-size: 14px;
 				margin: 30px 0 20px 0;
 			}
 
-			.preload .sub-title {
+			.preload__sub-title {
 				color: #ababab;
 				font-size: 12px;
 			}
 
-			.preload .footer {
+			.preload__footer {
 				text-align: center;
 				padding: 10px 0 20px 0;
 			}
 
-			.preload .footer a {
+			.preload__footer a {
 				font-size: 12px;
 				color: #ababab;
 				text-decoration: none;
 			}
 
-			.preload .loading {
+			.preload__loading {
 				height: 30px;
 				width: 30px;
 				border-radius: 30px;
@@ -95,8 +100,8 @@
 				}
 			}
 
-			.preload .loading::after,
-			.preload .loading::before {
+			.preload__loading::after,
+			.preload__loading::before {
 				content: "";
 				display: inline-block;
 				position: absolute;
@@ -107,11 +112,11 @@
 				background-color: currentColor;
 			}
 
-			.preload .loading::after {
+			.preload__loading::after {
 				left: -1px;
 			}
 
-			.preload .loading::before {
+			.preload__loading::before {
 				right: -1px;
 			}
 
@@ -140,19 +145,20 @@
 	</head>
 	<body>
 		<div id="app">
-			<div class="preload">
-				<div class="container">
-					<p class="name">PineCMS 内容管理系统</p>
-					<div class="loading"></div>
-					<p class="title">正在努力加载...</p>
-					<p class="sub-title">初次加载资源可能需要较多时间 请耐心等待</p>
+			<div class="preload__wrap">
+				<div class="preload__container">
+					<p class="preload__name">COOL-ADMIN</p>
+					<div class="preload__loading"></div>
+					<p class="preload__title">正在加载资源...</p>
+					<p class="preload__sub-title">初次加载资源可能需要较多时间 请耐心等待</p>
 				</div>
 
-				<div class="footer">
+				<div class="preload__footer">
 					<a href="https://github.com/xiusin/pinecms.git" target="_blank"> https://github.com/xiusin/pinecms.git </a>
 				</div>
 			</div>
 		</div>
+
 		<script type="module" src="/src/main.ts"></script>
 	</body>
 </html>
