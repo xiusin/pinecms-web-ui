@@ -1,6 +1,6 @@
 node_modules
 .DS_Store
-dist
+*.gz
 dist-ssr
 *.local
-public/UEditor
+/dist/UEditor/

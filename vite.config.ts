@@ -7,7 +7,7 @@ import { svgBuilder } from "./build/plugins/svg";
 import { cool } from "./build/plugins/cool";
 import Components from "unplugin-vue-components/vite";
 
-const prefix = `monaco-editor/esm/vs`;
+// const prefix = `monaco-editor/esm/vs`;
 
 function resolve(dir: string) {
 	return path.resolve(__dirname, ".", dir);
@@ -69,11 +69,11 @@ export default (): UserConfig => {
 			rollupOptions: {
 				output: {
 					manualChunks: {
-						jsonWorker: [`${prefix}/language/json/json.worker`],
-						cssWorker: [`${prefix}/language/css/css.worker`],
-						htmlWorker: [`${prefix}/language/html/html.worker`],
-						tsWorker: [`${prefix}/language/typescript/ts.worker`],
-						editorWorker: [`${prefix}/editor/editor.worker`],
+						// jsonWorker: [`${prefix}/language/json/json.worker`],
+						// cssWorker: [`${prefix}/language/css/css.worker`],
+						// htmlWorker: [`${prefix}/language/html/html.worker`],
+						// tsWorker: [`${prefix}/language/typescript/ts.worker`],
+						// editorWorker: [`${prefix}/editor/editor.worker`],
 					},
 				},
 			},
