@@ -204,7 +204,7 @@ export default defineComponent({
 				state.value = data;
 				if (!isInit) {
 					isInit = true;
-					CpuCores.value = data.cpu.cpus.map((item, idx) => "CPU" + idx);
+					CpuCores.value = data.cpu.cpus.map((item, idx) => "CPU" + (idx + 1));
 					let series = [];
 
 					for (const cpuCoresKey in CpuCores.value) {

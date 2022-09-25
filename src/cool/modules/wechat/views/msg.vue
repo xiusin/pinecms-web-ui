@@ -3,28 +3,30 @@
 		<cl-crud :ref="setRefs('crud')" @load="onLoad">
 			<el-row type="flex">
 				<cl-refresh-btn />
-				<cl-filter label="时间">
-					<el-select placeholder="时间" size="mini">
-						<el-option
-							v-for="(name, key) in timeSelections"
-							:key="key"
-							:value="name"
-							:label="key"
-						/>
-					</el-select>
-				</cl-filter>
-				<cl-filter label="消息类型">
-					<el-select placeholder="消息类型" size="mini">
-						<el-option value="" label="不限类型" />
-						<el-option
-							value="text,image,voice,shortvideo,video,news,music,location,link"
-							label="消息"
-						/>
-						<el-option value="event,transfer_customer_service" label="事件" />
-					</el-select>
-				</cl-filter>
 				<cl-flex1 />
-				<cl-search-key />
+				<cl-filter-group v-model="searchForm">
+					<cl-filter label="时间">
+						<el-select placeholder="时间" v-model="searchForm.time_zone" size="mini" clearable>
+							<el-option value="" label="不限" />
+							<el-option
+								v-for="(name, key) in timeSelections"
+								:key="key"
+								:value="name"
+								:label="key"
+							/>
+						</el-select>
+					</cl-filter>
+					<cl-filter label="消息类型">
+						<el-select placeholder="消息类型" v-model="searchForm.msg_type" size="mini" clearable>
+							<el-option value="" label="不限类型" />
+							<el-option
+								value="text,image,voice,shortvideo,video,news,music,location,link"
+								label="消息"
+							/>
+							<el-option value="event,transfer_customer_service" field="event" label="事件" />
+						</el-select>
+					</cl-filter>
+				</cl-filter-group>
 			</el-row>
 
 			<el-row>
@@ -106,18 +108,19 @@ export default defineComponent({
 	name: "wechat-msg",
 
 	setup() {
-		const TIME_FORMAT = "YYYY/MM/DD hh:mm:ss";
+		const TIME_FORMAT = "YYYY-MM-DD hh:mm:ss";
 		const service = inject<any>("service");
 		const { refs, setRefs }: any = useRefs();
 
 		const timeSelections = ref({
-			近24小时: moment().subtract(1, "days").format(TIME_FORMAT),
-			近3天: moment().subtract(3, "days").format(TIME_FORMAT),
-			近7天: moment().subtract(7, "days").format(TIME_FORMAT),
-			近30天: moment().subtract(30, "days").format(TIME_FORMAT)
+			"近24小时": moment().subtract(1, "days").format(TIME_FORMAT),
+			"近3天": moment().subtract(3, "days").format(TIME_FORMAT),
+			"近7天": moment().subtract(7, "days").format(TIME_FORMAT),
+			"近30天": moment().subtract(30, "days").format(TIME_FORMAT)
 		});
 
 		const table = reactive<Table>({
+			"context-menu":false,
 			columns: [
 				{
 					prop: "nickname",
@@ -195,6 +198,9 @@ export default defineComponent({
 			replyContent: ""
 		});
 
+
+		const searchForm = ref({"time_zone": "", "msg_type": ""});
+
 		const dataRule = {
 			replyContent: [{ required: true, message: "回复内容不能为空", trigger: "blur" }]
 		};
@@ -233,6 +239,7 @@ export default defineComponent({
 			setReply,
 			addLink,
 			dataForm,
+			searchForm,
 			timeSelections,
 			service,
 			visible,

@@ -51,7 +51,8 @@ export default (): UserConfig => {
 		css: {
 			preprocessorOptions: {
 				scss: {
-					additionalData: `@use "./src/assets/css/element.scss" as *;`
+					additionalData: `@use "./src/assets/css/element.scss" as *;`,
+					charset: false
 				}
 			}
 		},

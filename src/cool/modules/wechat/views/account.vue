@@ -87,7 +87,8 @@ export default defineComponent({
 				if (geoCoord) {
 					res.push({
 						name: data[i].name,
-						value: geoCoord.concat(data[i].value)
+						value: geoCoord.concat(data[i].value),
+						visualMap: false
 					});
 				}
 			}
@@ -535,8 +536,16 @@ export default defineComponent({
 				itemStyle: {
 					areaColor: "#323c48",
 					borderColor: "#111"
-				}
+				},
+				regions: [{
+					name: '北京',
+					itemStyle: {
+						areaColor: 'red',
+						color: 'red'
+					}
+				}],
 			},
+
 			series: [
 				{
 					name: "pm2.5",
