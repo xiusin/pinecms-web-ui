@@ -1,6 +1,6 @@
 <template>
 	<el-radio-group v-model="val" size="mini" @change="changeVal">
-		<el-radio v-for="item in props.options" :label="item.key">{{ item.label }}</el-radio>
+		<el-radio v-for="item in props.options" :key="item.key" :label="item.key">{{ item.label }}</el-radio>
 	</el-radio-group>
 </template>
 
@@ -12,7 +12,7 @@ export default defineComponent({
 	props: {
 		modelValue: {
 			type: Number,
-			default: () => 0
+			default: () => null
 		},
 		options: {
 			type: Array,
@@ -22,8 +22,8 @@ export default defineComponent({
 	emits: ["update:modelValue"],
 
 	setup(props, { emit }) {
-		console.log(props);
 		const val = ref(props.modelValue);
+
 		function changeVal(val) {
 			emit("update:modelValue", parseInt(val));
 		}

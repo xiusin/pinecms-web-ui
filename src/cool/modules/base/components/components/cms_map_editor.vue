@@ -1,18 +1,10 @@
 <template>
 	<el-row v-for="(item, index) in value" :gutter="8">
 		<el-col v-if="type === 'map'" :span="6">
-			<el-input
-				size="small"
-				v-model="value[index].key"
-				placeholder="键"
-			/>
+			<el-input size="small" v-model="value[index].key" placeholder="键" />
 		</el-col>
 		<el-col :span="12">
-			<el-input
-				size="small"
-				v-model="value[index].value"
-				placeholder="值"
-			/>
+			<el-input size="small" v-model="value[index].value" placeholder="值" />
 		</el-col>
 		<el-col :span="6">
 			<el-button

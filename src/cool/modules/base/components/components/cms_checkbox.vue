@@ -24,6 +24,7 @@ export default defineComponent({
 	emits: ["update:modelValue"],
 
 	setup(props, { emit }) {
+		console.log(props.options);
 		let checkList = ref<String[]>([]);
 
 		watch(

@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<el-alert title="温馨提示：填写微信公众号开发配置，请前往微信公众平台申请服务号并完成认证" :closable="false" type="warning" show-icon />
 		<cl-crud :ref="setRefs('crud')" @load="onLoad">
 			<el-row type="flex">
 				<cl-add-btn />

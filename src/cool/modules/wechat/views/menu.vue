@@ -1,10 +1,11 @@
 <template>
 	<div style="padding: 10px; background: #fff">
 		<div id="app-menu">
+			<el-alert title="配置微信公众号菜单，点击确认，保存菜单并发布至微信公众号" :closable="false" type="warning" show-icon />
+
 			<div class="weixin-preview">
 				<div class="weixin-bd">
 					<div class="weixin-header">
-						公众号菜单
 						<account-select v-model="appid" />
 					</div>
 					<ul class="weixin-menu" id="weixin-menu">
@@ -102,6 +103,7 @@ export default {
 	},
 	data() {
 		return {
+			hasErr: false,
 			appid: "",
 			menu: { buttons: [], menuid: 0 }, //当前菜单
 			selectedMenuIndex: 0, //当前选中菜单索引
@@ -258,8 +260,9 @@ export default {
 .weixin-preview {
 	position: relative;
 	width: 320px;
-	height: 540px;
+	height: 600px;
 	float: left;
+	margin-top: 10px;
 	margin-right: 10px;
 	border: 1px solid #e7e7eb;
 }
@@ -301,8 +304,9 @@ export default {
 .weixin-preview .weixin-menu .menu-item {
 	position: relative;
 	float: left;
-	line-height: 50px;
-	height: 50px;
+	line-height: 30px;
+	height: 30px;
+	font-size: 12px;
 	text-align: center;
 	width: 33.33%;
 	border-left: 1px solid #e7e7e7;
@@ -313,12 +317,11 @@ export default {
 /*二级*/
 .weixin-preview .weixin-sub-menu {
 	position: absolute;
-	bottom: 60px;
+	bottom: 40px;
 	left: 0;
 	right: 0;
 	border-top: 1px solid #d0d0d0;
-	margin-bottom: 0px;
-	background: #fafafa;
+	margin-bottom: 0;
 	display: block;
 	padding: 0;
 }
@@ -428,7 +431,7 @@ export default {
 	background-color: #f4f5f9;
 	border: 1px solid #e7e7eb;
 	float: left;
-	min-height: 540px;
+	min-height: 600px;
 }
 
 .weixin-menu-detail .menu-name {

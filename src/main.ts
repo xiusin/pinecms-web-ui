@@ -15,7 +15,10 @@ import "./mock";
 
 // element-plus
 import ElementPlus from "element-plus";
+
 import "element-plus/theme-chalk/src/index.scss";
+
+// import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 
 // mitt
 import mitt from "mitt";
@@ -29,6 +32,11 @@ bootstrap(app)
 	.then(() => {
 		// echarts 可视图表
 		app.component("v-chart", VueECharts);
+
+		// for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+		// 	console.log(key, component);
+		// 	app.component(key, component);
+		// }
 
 		// 事件通讯
 		app.provide("mitt", mitt());

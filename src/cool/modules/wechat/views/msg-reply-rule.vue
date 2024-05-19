@@ -1,5 +1,8 @@
 <template>
 	<div>
+
+		<el-alert title="温馨提示：1.粉丝在公众号发送内容时，通过关键词可触发关键词回复；2.同时可启用多个关键词回复，有多条关键词匹配时优选选择排序靠前的一条" :closable="false" type="warning" show-icon />
+
 		<cl-crud :ref="setRefs('crud')" @load="onLoad">
 			<el-row type="flex">
 				<cl-add-btn />

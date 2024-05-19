@@ -16,7 +16,7 @@
 				</el-tab-pane>
 				<div style="padding: 10px 0; text-align: right" v-if="tab === '邮箱设置'">
 					<el-button size="mini" type="info" @click="sendTestEmail"
-						>测试发送邮件
+						>测试邮件 <el-icon><MessageBox /></el-icon>
 					</el-button>
 					<cl-form :ref="setRefs('emailForm')" />
 				</div>
@@ -37,10 +37,13 @@ import { useRefs } from "/@/cool";
 import { CrudLoad, QueryList, Table, Upsert } from "@cool-vue/crud/types";
 import { ElMessage } from "element-plus";
 import CmsMapEditor from "../components/components/cms_map_editor.vue";
+import CmsCheckbox from "../components/components/cms_checkbox.vue";
+import CmsRatio from "../components/components/cms_radio.vue";
+import { ProCheckbox, ProRadio, ProSelect } from "element-pro-components";
 
 export default defineComponent({
 	name: "sys-setting",
-	components: { CmsMapEditor },
+	components: { CmsMapEditor, ProCheckbox, ProRadio, ProSelect, CmsCheckbox, CmsRatio },
 	setup() {
 		const service = inject<any>("service");
 
@@ -65,11 +68,6 @@ export default defineComponent({
 					align: "left"
 				},
 				{
-					label: "分组",
-					prop: "group",
-					width: 100
-				},
-				{
 					label: "值",
 					prop: "value",
 					showOverflowTooltip: true,
@@ -92,7 +90,7 @@ export default defineComponent({
 		});
 		// 新增编辑配置
 		let upsert = reactive<Upsert>({
-			width: "1000px",
+			width: "800px",
 			items: [
 				{
 					prop: "form_name",
@@ -140,13 +138,7 @@ export default defineComponent({
 						message: "Key不能为空"
 					}
 				},
-				{
-					prop: "value",
-					label: "值",
-					component: {
-						name: "slot-value"
-					}
-				},
+
 				{
 					prop: "listorder",
 					label: "排序",
@@ -163,10 +155,15 @@ export default defineComponent({
 					component: {
 						name: "el-input",
 						props: {
-							placeholder: "请输入备注",
-							rows: 3,
-							type: "textarea"
+							placeholder: "请输入备注"
 						}
+					}
+				},
+				{
+					prop: "value",
+					label: "值",
+					component: {
+						name: "slot-value"
 					}
 				}
 			]
@@ -285,7 +282,7 @@ export default defineComponent({
 	position: absolute;
 	z-index: 888;
 	right: 20px;
-	top: 20px;
+	top: 15px;
 }
 
 .editor {

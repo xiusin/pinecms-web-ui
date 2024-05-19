@@ -65,11 +65,6 @@ export default defineComponent({
 			},
 			columns: [
 				{
-					type: "index",
-					label: "#",
-					width: 60
-				},
-				{
 					prop: "userid",
 					label: "用户ID",
 					width: 60

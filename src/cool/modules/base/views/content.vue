@@ -35,76 +35,6 @@
 								:props="{ size: '50%' }"
 								:op-list="opAdvList"
 							/>
-							<!--								<cl-filter label="单选">-->
-							<!--									<el-select size="mini">-->
-							<!--										<el-option value="" label="全部"/>-->
-							<!--										<el-option :value="0" label="禁用"/>-->
-							<!--										<el-option :value="1" label="启用"/>-->
-							<!--									</el-select>-->
-							<!--								</cl-filter>-->
-
-							<!--								<cl-filter label="通用渲染">-->
-							<!--									<component-->
-							<!--										:is="'cms-select'"-->
-							<!--										v-bind="{-->
-							<!--										size: 'mini',-->
-							<!--										options: [{ label: '第一', value: 'No.1' }]-->
-							<!--									}"-->
-							<!--									/>-->
-							<!--								</cl-filter>-->
-
-							<!--								<cl-filter label="输入">-->
-							<!--									<el-input placeholder="请输入姓名" clearable size="mini"/>-->
-							<!--								</cl-filter>-->
-							<!--								<div></div>-->
-							<!--								<cl-filter label="级联">-->
-							<!--									<el-cascader-->
-							<!--										size="mini"-->
-							<!--										:options="[]"-->
-							<!--										:props="{ expandTrigger: 'hover' }"-->
-							<!--									/>-->
-							<!--								</cl-filter>-->
-							<!--								<cl-filter label="日期时间">-->
-							<!--									<el-date-picker-->
-							<!--										size="mini"-->
-							<!--										type="datetimerange"-->
-							<!--										range-separator="至"-->
-							<!--										start-placeholder="开始日期"-->
-							<!--										end-placeholder="结束日期"-->
-							<!--									/>-->
-							<!--								</cl-filter>-->
-
-							<!--								<cl-filter label="日期范围">-->
-							<!--									<el-date-picker-->
-							<!--										type="daterange"-->
-							<!--										size="mini"-->
-							<!--										align="right"-->
-							<!--										unlink-panels-->
-							<!--										range-separator="至"-->
-							<!--										start-placeholder="开始日期"-->
-							<!--										end-placeholder="结束日期"-->
-							<!--									/>-->
-							<!--								</cl-filter>-->
-
-							<!--								<cl-filter label="日期">-->
-							<!--									<el-select-->
-							<!--										multiple-->
-							<!--										size="mini"-->
-							<!--										collapse-tags-->
-							<!--										style="margin-left: 20px"-->
-							<!--										placeholder="请选择"-->
-							<!--									>-->
-							<!--										<el-option-->
-							<!--											v-for="item in [-->
-							<!--											{ label: '参数1', value: '1' },-->
-							<!--											{ label: '参数2', value: '2' }-->
-							<!--										]"-->
-							<!--											:key="item.value"-->
-							<!--											:label="item.label"-->
-							<!--											:value="item.value"-->
-							<!--										/>-->
-							<!--									</el-select>-->
-							<!--								</cl-filter>-->
 						</el-row>
 
 						<el-row>
@@ -321,9 +251,7 @@ export default defineComponent({
 		// 刷新列表
 		function refresh(params: any) {
 			if (!catType.value) {
-				setTimeout(() => {
-					refs.value.crud.refresh(params);
-				}, 20);
+				setTimeout(() => refs.value.crud?.refresh(params), 20);
 			}
 		}
 
@@ -338,6 +266,12 @@ export default defineComponent({
 
 		// crud 加载
 		async function onLoad({ ctx }: any) {
+			const originalAdd = service.system.content.add;
+			service.system.content.add = async (data) => {
+				const _data = { ...data, mid: midRef.value, catid: catId.value };
+				return originalAdd.call(service.system.content, _data);
+			};
+
 			ctx.service(service.system.content).done();
 		}
 
@@ -376,7 +310,6 @@ export default defineComponent({
 				});
 				advItemList.value = data.search_fields || [];
 				upsert.items = data.upset_comps;
-
 				table.value = data;
 				table.value?.columns.push({
 					label: "操作",

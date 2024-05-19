@@ -43,6 +43,17 @@
 					<template #column-headimgurl="{ scope }">
 						<el-image :src="scope.row.headimgurl" />
 					</template>
+					<template #column-tagid_list="{ scope }">
+						<template v-for="(id, index) in scope.row.tagid_list">
+							<el-tag
+								size="small"
+								:key="id"
+								v-if="typeof tagsMap[id] !== 'undefined'"
+								:type="['primary', 'success', 'info', 'warning', 'danger'][index]">
+							{{ tagsMap[id] }}
+							</el-tag>
+						</template>
+					</template>
 				</cl-table>
 			</el-row>
 
@@ -185,13 +196,14 @@ export default defineComponent({
 					width: 40
 				},
 				{
-					prop: "openid",
-					label: "OpenId",
-					width: 230
-				},
-				{
 					prop: "nickname",
 					label: "昵称",
+					align: "left",
+					width: 150
+				},
+				{
+					prop: "tagid_list",
+					label: "标签",
 					align: "left"
 				},
 				{
@@ -281,11 +293,11 @@ export default defineComponent({
 		const appid = ref("");
 
 		function showTagManager() {
-			if (!form.value.appid) {
+			if (!appid.value) {
 				ElMessage.error("请先选择一个公众号");
 				return;
 			}
-			appid.value = form.value.appid;
+			// appid.value = form.value.appid;
 			showWxUserTagsEditor.value = true;
 			refs.value.wxUserTagsEditor.init(appid);
 		}
@@ -297,12 +309,12 @@ export default defineComponent({
 		}
 
 		function syncFans() {
-			if (!form.value.appid) {
+			if (!appid.value) {
 				ElMessage.error("请先选择一个公众号");
 				return;
 			}
 			service.wechat.user
-				.sync({ appid: form.value.appid })
+				.sync({ appid: appid.value })
 				.then(() => {
 					refs.value.crud.refresh();
 				})
@@ -312,6 +324,7 @@ export default defineComponent({
 		}
 
 		const dataListSelections = ref([]);
+		const tagsMap = ref<{ [key: string]: [value: string] }>({});
 
 		function onSelectionChange(selection: any[]) {
 			dataListSelections.value = selection;
@@ -324,6 +337,17 @@ export default defineComponent({
 		watch(appid, (newValue, oldValue) => {
 			//直接监听
 			refs.value.crud.refresh();
+
+			service.wechat.tags
+				.list({
+					appid: appid.value
+				})
+				.then((data) => {
+					data.forEach((item: any) => {
+						tagsMap.value[item.id] = item.name;
+					});
+				});
+
 		});
 
 		// 刷新列表
@@ -350,6 +374,7 @@ export default defineComponent({
 			showWxUserTagsEditor,
 			showTagManager,
 			syncFans,
+			tagsMap,
 			service,
 			refs,
 			table,
