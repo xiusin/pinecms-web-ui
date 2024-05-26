@@ -9,13 +9,16 @@
     "lint:eslint": "eslint \"{src,mock}/**/*.{vue,ts,tsx}\" --fix"
   },
   "dependencies": {
-    "@cool-vue/crud": "5.4.4",
+    "@cool-vue/crud": "1.0.4",
     "@element-plus/icons-vue": "^0.2.7",
+    "@pluve/magic-search-table": "^1.0.21",
     "array.prototype.flat": "^1.2.4",
     "axios": "^0.21.1",
     "clipboard": "^2.0.8",
     "codemirror": "^5.62.0",
     "core-js": "3.21.1",
+    "dayjs": "^1.11.11",
+    "dc-search-table": "^1.0.73",
     "echarts": "^5.0.2",
     "element-plus": "^1.1.0-beta.20",
     "element-pro-components": "^1.3.1",

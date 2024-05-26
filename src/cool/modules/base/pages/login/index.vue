@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
@@ -139,8 +139,8 @@ export default defineComponent({
 				} else {
 					router.push("/");
 				}
-			} catch (err) {
-				ElMessage.error(err);
+			} catch (e: any) {
+				ElMessage.error(e.message);
 				refs.value.captcha.refresh();
 			}
 		}
