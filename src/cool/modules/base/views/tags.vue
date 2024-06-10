@@ -26,12 +26,9 @@ import { defineComponent, inject, reactive } from "vue";
 
 export default defineComponent({
 	name: "sys-tags",
-
 	setup() {
 		const service = inject<any>("service");
-
 		const form = reactive<any>({ relevance: 1 });
-
 		const upsert = reactive<Upsert>({
 			items: [
 				{
@@ -40,6 +37,7 @@ export default defineComponent({
 					span: 24,
 					component: {
 						name: "el-input",
+						size: "mini",
 						props: {
 							placeholder: "名称"
 						}
@@ -52,10 +50,10 @@ export default defineComponent({
 				{
 					prop: "listorder",
 					label: "排序",
-					span: 8,
-					value: 0,
+					span: 16,
 					component: {
 						name: "el-input-number",
+						size: "mini",
 						props: {
 							placeholder: "排序"
 						}

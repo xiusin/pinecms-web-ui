@@ -5,7 +5,7 @@
 			<cl-add-btn />
 		</el-row>
 		<el-row>
-			<el-tabs style="width: 100%" v-model="tab">
+			<el-tabs style="width: 100%" v-model="tab" size="mini">
 				<el-tab-pane
 					v-for="(item, index) in list"
 					:label="item.label"
@@ -14,10 +14,11 @@
 				>
 					<cl-table v-bind="table" />
 				</el-tab-pane>
+
 				<div style="padding: 10px 0; text-align: right" v-if="tab === '邮箱设置'">
 					<el-button size="mini" type="info" @click="sendTestEmail"
-						>测试邮件 <el-icon><MessageBox /></el-icon>
-					</el-button>
+						>测试邮件 <el-icon><Promotion /></el-icon
+					></el-button>
 					<cl-form :ref="setRefs('emailForm')" />
 				</div>
 			</el-tabs>
@@ -25,7 +26,12 @@
 
 		<cl-upsert :ref="setRefs('upsert')" v-bind="upsert">
 			<template #slot-value="{ scope }">
-				<component :is="scope.editor" v-model="scope.value" :itemprop="scope.options" />
+				<component
+					:is="scope.editor"
+					v-model="scope.value"
+					:data="scope.options?.data || []"
+					:itemprop="scope.options"
+				/>
 			</template>
 		</cl-upsert>
 	</cl-crud>
@@ -40,10 +46,16 @@ import CmsMapEditor from "../components/components/cms_map_editor.vue";
 import CmsCheckbox from "../components/components/cms_checkbox.vue";
 import CmsRatio from "../components/components/cms_radio.vue";
 import { ProCheckbox, ProRadio, ProSelect } from "element-pro-components";
-
 export default defineComponent({
 	name: "sys-setting",
-	components: { CmsMapEditor, ProCheckbox, ProRadio, ProSelect, CmsCheckbox, CmsRatio },
+	components: {
+		CmsMapEditor,
+		ProCheckbox,
+		ProRadio,
+		ProSelect,
+		CmsCheckbox,
+		CmsRatio
+	},
 	setup() {
 		const service = inject<any>("service");
 
@@ -142,6 +154,7 @@ export default defineComponent({
 				{
 					prop: "listorder",
 					label: "排序",
+					hook: "number",
 					component: {
 						name: "el-input",
 						props: {
@@ -196,14 +209,14 @@ export default defineComponent({
 						prop: "email",
 						component: {
 							name: "el-input",
-
 							attrs: {
 								placeholder: "请填写接收邮箱"
 							}
 						},
 						rules: {
 							required: true,
-							message: "接收邮箱不能为空"
+							pattern: /^([a-zA-Z0-9]+[-_\.]?)+@[a-zA-Z0-9]+\.[a-z]+$/,
+							message: "请输入正确的邮箱格式"
 						}
 					},
 					{
@@ -218,7 +231,7 @@ export default defineComponent({
 						},
 						rules: {
 							required: true,
-							message: "接收邮箱不能为空"
+							message: "请填写接收标题"
 						}
 					},
 					{

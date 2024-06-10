@@ -39,7 +39,9 @@ export default defineComponent({
 
 		function reloadThemes() {
 			service.system.assets.themes().then((data) => {
-				themeList.value?.push(...data);
+				if (data) {
+					themeList.value?.push(...data);
+				}
 			});
 		}
 

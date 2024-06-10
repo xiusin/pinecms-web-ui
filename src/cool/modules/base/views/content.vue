@@ -39,6 +39,7 @@
 
 						<el-row>
 							<cl-table
+								:v-show="initedRef"
 								:ref="setRefs('table')"
 								v-bind="table"
 								:props="{
@@ -101,7 +102,6 @@ export default defineComponent({
 		// 	enableAutoSave: false
 		// };
 
-
 		// let renders = {
 		// 	singleImage: ({ h, scope }) => {
 		// 		console.log(scope)
@@ -115,9 +115,6 @@ export default defineComponent({
 		// 		);
 		// 	}
 		// };
-
-
-
 
 		const service = inject<any>("service");
 
@@ -134,6 +131,7 @@ export default defineComponent({
 		const treeRef = ref<any>({});
 		// 抽屉
 		const drawerRef = ref(true);
+		const initedRef = ref(false);
 		const catType = ref<any>(0);
 
 		// 绑定值回调
@@ -251,7 +249,7 @@ export default defineComponent({
 		// 刷新列表
 		function refresh(params: any) {
 			if (!catType.value) {
-				setTimeout(() => refs.value.crud?.refresh(params), 20);
+				setTimeout(() => refs.value.crud?.refresh(params), 10);
 			}
 		}
 
@@ -285,6 +283,7 @@ export default defineComponent({
 		watch(midRef, (newValue) => {
 			midRef.value = newValue;
 			service.system.model.modelTable({ mid: newValue }).then((data: any) => {
+				initedRef.value = true;
 				data.columns.map((item: any) => {
 					if (item.component) {
 						item.component =
@@ -330,6 +329,7 @@ export default defineComponent({
 			expandedKeys,
 			setRefs,
 			drawerRef,
+			initedRef,
 			modelValue,
 			table,
 			menuList,

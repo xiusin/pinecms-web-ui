@@ -117,12 +117,12 @@ export default defineComponent({
 					label: "图片"
 				},
 				{
-					prop: "start_time",
+					prop: "startTime",
 					label: "开始时间",
 					width: 160
 				},
 				{
-					prop: "end_time",
+					prop: "endTime",
 					label: "结束时间",
 					width: 160
 				},
@@ -133,12 +133,12 @@ export default defineComponent({
 					dict: [
 						{
 							label: "正常",
-							value: 1,
+							value: true,
 							type: "success"
 						},
 						{
 							label: "禁用",
-							value: 0,
+							value: false,
 							type: "danger"
 						}
 					]
@@ -233,21 +233,20 @@ export default defineComponent({
 					}
 				},
 				{
-					prop: "data_range",
+					prop: "date_range",
 					label: "有效期",
-					span: 12,
+					span: 24,
+					hook: "datetimerange",
 					component: {
 						name: "el-date-picker",
 						props: {
 							type: "datetimerange",
+							format: "YYYY-MM-DD HH:mm:ss",
+							"value-format": "YYYY-MM-DD HH:mm:ss",
 							"range-separator": "至",
 							"start-placeholder": "开始时间",
 							"end-placeholder": "结束日期"
 						}
-					},
-					rules: {
-						required: true,
-						message: "值不能为空"
 					}
 				},
 				{
@@ -256,6 +255,10 @@ export default defineComponent({
 					span: 24,
 					component: {
 						name: "cl-upload"
+					},
+					rules: {
+						required: true,
+						message: "图片不能为空"
 					}
 				},
 				{
@@ -269,17 +272,18 @@ export default defineComponent({
 				{
 					prop: "status",
 					label: "状态",
-					value: 1,
+					value: true,
+					hook: "boolean",
 					component: {
 						name: "el-radio-group",
 						options: [
 							{
 								label: "正常",
-								value: 1
+								value: true
 							},
 							{
 								label: "禁用",
-								value: 0
+								value: false
 							}
 						]
 					}

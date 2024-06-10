@@ -238,16 +238,20 @@ export function orderBy(list: Array<any>, key: any) {
 	return list.sort((a, b) => a[key] - b[key]);
 }
 
-export function deepTree(list: Array<any>) {
+export function deepTree(list: Array<any> | any) {
 	const newList: Array<any> = [];
 	const map: any = {};
 
-	list.forEach((e) => {
+	if (list?.list instanceof Array) {
+		list = list.list;
+	}
+
+	list.forEach((e: any) => {
 		e.parentId = e.parentId || e.parent_id;
 		map[e.id] = e;
 	});
 
-	list.forEach((e) => {
+	list.forEach((e: any) => {
 		const parent = map[e.parentId];
 
 		if (parent) {

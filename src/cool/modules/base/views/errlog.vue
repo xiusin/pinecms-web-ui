@@ -32,14 +32,12 @@
 		<cl-dialog title="详细日志" v-model="detail.show">
 			<pre
 				style="
-					font-size: 13px;
+					font-size: 10px;
 					font-family: 'Courier New', Courier, monospace;
 					line-height: 20px;
 					white-space: pre-wrap;
 				"
-			>
-				{{ detail.message }}
-			</pre
+				>{{ detail.message }} </pre
 			>
 		</cl-dialog>
 	</cl-crud>

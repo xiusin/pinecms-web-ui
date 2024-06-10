@@ -82,7 +82,7 @@
 		</el-row>
 		<el-row :gutter="15" class="system_state">
 			<el-col :span="6">
-				<el-card v-if="state.disk" shadow="hover">
+				<el-card v-if="state.disk" shadow="hover" style="height: 400px">
 					<div slot="header">
 						<span>硬盘</span>
 						<el-tag type="success" size="mini" style="float: right; border-radius: 2px"
@@ -107,7 +107,7 @@
 				</el-card>
 			</el-col>
 			<el-col :span="6">
-				<el-card v-if="state.ram" shadow="hover">
+				<el-card v-if="state.ram" shadow="hover" style="height: 400px">
 					<div slot="header" class="clearfix">
 						<span>内存</span>
 						<el-tag type="success" size="mini" style="float: right; border-radius: 2px"
@@ -130,7 +130,7 @@
 				</el-card>
 			</el-col>
 			<el-col :span="6">
-				<el-card v-if="state.cpu" shadow="hover">
+				<el-card v-if="state.cpu" shadow="hover" style="height: 400px">
 					<div slot="header" class="clearfix">
 						<span>CPU</span>
 						<el-tag type="success" size="mini" style="float: right; border-radius: 2px">
@@ -153,7 +153,7 @@
 				</el-card>
 			</el-col>
 			<el-col :span="6">
-				<el-card v-if="state.nets" shadow="hover">
+				<el-card v-if="state.nets" shadow="hover" style="height: 400px">
 					<div slot="header" class="clearfix">
 						<span>网络IO</span>
 						<el-tag type="success" size="mini" style="float: right; border-radius: 2px">

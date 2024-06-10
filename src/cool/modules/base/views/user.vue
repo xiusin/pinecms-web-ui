@@ -27,13 +27,13 @@
 							<cl-refresh-btn />
 							<cl-add-btn />
 							<cl-multi-delete-btn />
-							<el-button
+							<!-- <el-button
 								size="mini"
 								type="success"
 								:disabled="selects.ids.length == 0"
 								@click="toMove()"
 								>转移</el-button
-							>
+							> -->
 							<cl-flex1 />
 							<cl-search-key />
 						</el-row>
@@ -171,16 +171,6 @@ export default defineComponent({
 						}
 					]
 				},
-				// {
-				// 	prop: "lastlogintime",
-				// 	label: "最后登录时间",
-				// 	minWidth: 150
-				// },
-				// {
-				// 	prop: "lastloginip",
-				// 	label: "最后登录IP",
-				// 	minWidth: 150
-				// },
 				{
 					type: "op",
 					buttons: ["edit", "delete"],
@@ -297,6 +287,22 @@ export default defineComponent({
 					}
 				},
 				{
+					prop: "department_id",
+					label: "部门",
+					span: 12,
+					value: 0,
+					component: {
+						name: "cms-select",
+						props: {
+							service: service.system.department
+						}
+					},
+					rules: {
+						required: true,
+						message: "角色不能为空"
+					}
+				},
+				{
 					prop: "level_id",
 					label: "职级",
 					span: 12,
@@ -325,22 +331,13 @@ export default defineComponent({
 					},
 					rules: {
 						required: true,
-						message: "角色不能为空"
-					}
-				},
-				{
-					prop: "city",
-					label: "城市",
-					span: 12,
-					component: {
-						name: "cl-distpicker"
+						message: "岗位不能为空"
 					}
 				},
 				{
 					prop: "password",
 					label: "密码",
 					span: 12,
-					hidden: ":isAdd",
 					component: {
 						name: "el-input",
 						props: {
