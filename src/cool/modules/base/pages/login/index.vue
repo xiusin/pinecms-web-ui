@@ -46,7 +46,7 @@
 										</el-input>
 									</el-form-item>
 
-									<el-form-item label="验证码" class="captcha">
+									<!-- <el-form-item label="验证码" class="captcha">
 										<el-input
 											v-model="form.verifyCode"
 											placeholder="请输入图片验证码"
@@ -65,7 +65,7 @@
 												}
 											"
 										/>
-									</el-form-item>
+									</el-form-item> -->
 								</el-form>
 
 								<el-button
